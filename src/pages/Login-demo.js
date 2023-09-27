@@ -54,7 +54,7 @@ const Login = () => {
         email, 
         password, 
       }); 
-      console.log('Response:', response);  // Log the response 
+      console.log('Response from login:', response);  // Log the response 
 
       const token = response.data.token; 
       localStorage.setItem('token', token); 

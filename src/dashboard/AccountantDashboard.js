@@ -1,22 +1,24 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import LogoutButton from '../components/LogoutButton';
-import '../styles/DashboardStyles.css';  // Import the styles
+import { useNavigate } from 'react-router-dom';
+import api from '../api';
+import './dashCSS/AllDashStyles.css';
+import { LogoutButton, BackButton, useDashHooks } from './AllDashSetup.js'; 
 
-
-
-const BACKEND_URL = "https://order-taker-back-5416a0177bda.herokuapp.com";
 
 function AccountantDashboard() {
+  const navigate = useNavigate();
+
   const [cashHoldings, setCashHoldings] = useState([]);
   const [name, setName] = useState('');
   const userName = localStorage.getItem('userName');
+  const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
+
 
   useEffect(() => {
     // Fetch the name of the ACC from the backend
-    axios.get(`${BACKEND_URL}/api/dashboard/acc/details`, { withCredentials: true })
+    api.get('/api/dashboard/acc/details', { withCredentials: true })
       .then(response => {
         setName(response.data.name);
       })
@@ -25,7 +27,7 @@ function AccountantDashboard() {
       });
 
     // Fetch cash holdings for all ACCs from the backend
-    axios.get(`${BACKEND_URL}/api/dashboard/data`, { withCredentials: true })
+    api.get('/api/dashboard/data', { withCredentials: true })
       .then(response => {
         setCashHoldings(response.data.cashHoldings);
       })
@@ -36,7 +38,7 @@ function AccountantDashboard() {
 
   const collectCash = (cashierID) => {
     // Collect the cash from the specified Cashier
-    axios.post(`${BACKEND_URL}/api/dashboard/acc/update-cash-holding`, { cashierID }, { withCredentials: true })
+    api.post('/api/dashboard/acc/update-cash-holding', { cashierID }, { withCredentials: true })
       .then(response => {
         // Update `cashHoldings` state with the updated data from the backend
         setCashHoldings(response.data.cashHoldings);
@@ -48,9 +50,12 @@ function AccountantDashboard() {
 
   return (
     <div>
-      <LogoutButton />
-      <h1>Accountant Dashboard</h1>
-      <h2>Welcome {name}!</h2>
+      <div className="d-flex justify-content-between p-2">
+          <BackButton onBack={() => navigate(-1)} />
+          <LogoutButton onLogout={useDashHooks} />
+      </div>
+      <h1 class="welcome-msg-dash">Welcome, {name}!</h1>
+      <h2 class ="role-msg-dash">Role: {originalRole}</h2>
       <ul>
         {cashHoldings.map(holding => (
           <li key={holding.cashierID}>

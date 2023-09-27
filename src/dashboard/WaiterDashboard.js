@@ -2,22 +2,27 @@
 // src/dashboard/WaiterDashboard.js
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './dashCSS/AllDashStyles.css';
+
 import TableBox from './dashFunctions/TableBox.js';
 import OrderManager from './dashFunctions/OrderManager.js';
-import './css/WaiterDashboard.css';  // Import the CSS
-import LogoutButton from '../components/LogoutButton';
-import '../styles/DashboardStyles.css';  // Import the styles
 
-import WaiterNavbar from './components/Navbar/WaiterNavbar';
-import TablesSection from './components/Tables/TablesSection';
-import OrdersSummary from './components/Orders/OrdersSummary';
+import { DashboardHeader,LogoutButton, BackButton, useDashHooks } from './AllDashSetup.js'; 
 
+import WaiterNavbar from '../components/NavBar/WaiterNavBar.js';
+import TablesSection from '../components/Tables/TablesSection.js';
+import OrdersSummary from '../components/Orders/OrdersSummary.js';
 
 
 const WaiterDashboard = () => {
+    const navigate = useNavigate();
+
     //const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
     const userName = localStorage.getItem('userName');
+    const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
+
 
     const tables = [1, 2, 3, 4, 5, 6];  // Example table numbers
     // as an example for now
@@ -40,25 +45,30 @@ const WaiterDashboard = () => {
 
     return (
         <div className="waiter-dashboard">
-            <WaiterNavbar />
-            <LogoutButton />
-            <h1>Welcome, {localStorage.getItem('userName')}!</h1>
-            <hr />
-            <h2>Tables</h2>
-            <div className="tables-grid">
-                {tables.map((table, index) => (
-                    <TableBox
-                        key={index}
-                        table={table}
-                        onSelect={() => setSelectedTable(table)}
-                    />
-                ))}
-            </div>
-            <hr />
-            {selectedTable && <OrderManager table={selectedTable} />}
-            <TablesSection />
-            <OrdersSummary />
+            <div className="d-flex justify-content-between p-2">
+                <BackButton onBack={() => navigate(-1)} />
+                <LogoutButton onLogout={useDashHooks} />
         </div>
+        <DashboardHeader 
+            userName={userName} 
+            originalRole={originalRole} 
+        />
+        <hr />
+        <h2>Tables</h2>
+        <div className="tables-grid">
+            {tables.map((table, index) => (
+                <TableBox
+                    key={index}
+                    table={table}
+                    onSelect={() => setSelectedTable(table)}
+                />
+            ))}
+        </div>
+        <hr />
+        {selectedTable && <OrderManager table={selectedTable} />}
+        <TablesSection />
+        <OrdersSummary />
+    </div>
     );
 };
 

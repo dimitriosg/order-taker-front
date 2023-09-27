@@ -1,14 +1,29 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import api from '../api';
 
 const RoleSwitcher = () => {
+    console.log(localStorage);  // Debugging line
     const navigate = useNavigate();
-    const [selectedRole, setSelectedRole] = useState('');
     const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
+
+    const [roles, setRoles] = useState([]);
+    const [selectedRole, setSelectedRole] = useState('');
     const [hasSwitchedRole, setHasSwitchedRole] = useState(false);
+
+    useEffect(() => {
+        const fetchRoles = async () =>{
+            try {
+                const response = await api.get('/api/roles');
+                setRoles(response.data);
+            } catch (error) {
+                console.error('Error fetching roles:', error);
+            }
+        };
+        fetchRoles();
+    }, []);
 
 
     const handleRoleChange = (event) => {
@@ -54,14 +69,17 @@ const RoleSwitcher = () => {
     };
 
     return (
-        <div>
-            <select value={selectedRole} onChange={handleRoleChange} className="form-select m-2">
+        <div className="d-flex align-items-center">
+            <select 
+                value={selectedRole} 
+                onChange={handleRoleChange} 
+                className="form-select m-2" 
+                id="custom-width-role-selector"
+            >
                 <option value="" disabled>Select role</option>
-                <option value="admin">Admin</option>
-                <option value="developer">Developer</option>
-                <option value="accountant">Accountant</option>
-                <option value="cashier">Cashier</option>
-                <option value="waiter">Waiter</option>
+                {roles.map((role, index) => (
+                    <option key={index} value={role.value}>{role.label}</option>
+                ))}
             </select>
             <button onClick={handleApplyRole} className="btn btn-success m-2">
                 Apply

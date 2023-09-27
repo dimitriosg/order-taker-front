@@ -1,38 +1,29 @@
 /* eslint-disable no-unused-vars */
 // src/dashboard/AdminDashboard.js
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// All Dashboard Setup + CSS (in 1 file)
+import './AllDashSetup.js'; 
+import { DashboardHeader, LogoutButton, BackButton, handleLogout } from './AllDashSetup.js'; 
+
 import RoleSwitcher from '../components/RoleSwitcher';
-import '../styles/DashboardStyles.css';  // Import the styles
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
-    const userName = localStorage.getItem('userName');
+    console.log(localStorage);  // Debugging line
+    const [userName, setUserName] = useState('');
     const [selectedRole, setSelectedRole] = useState('');
-    const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
+    const [originalRole, setOriginalRole] = useState('');
     const [hasSwitchedRole, setHasSwitchedRole] = useState(false);
     const [activeTab, setActiveTab] = useState('users');
 
-    const handleRoleChange = (event) => {
-        setSelectedRole(event.target.value);
-    };
-
-    const handleApplyRole = () => {
-        if (selectedRole) {
-          RoleSwitcher(selectedRole, navigate);
-          setHasSwitchedRole(true);
-        }
-    };
-
-    const handleRevertRole = () => {
-        if (hasSwitchedRole) {
-          RoleSwitcher(originalRole, navigate);
-          setHasSwitchedRole(false);
-        }
-    };
+    useEffect(() => {
+        setUserName(localStorage.getItem('userName') || 'User');
+        setOriginalRole(localStorage.getItem('role') || null );
+    }, []);
 
     const handleLogout = () => {
         localStorage.clear();
@@ -42,11 +33,16 @@ const AdminDashboard = () => {
     return (
         <div className="admin-dashboard">
             <div className="d-flex justify-content-between p-2">
-                <button onClick={() => navigate(-1)} className="btn btn-secondary">Back</button>
-                <button onClick={() => localStorage.clear()} className="btn btn-danger">Logout</button>
+                <BackButton onBack={() => navigate(-1)} />
+                <LogoutButton onLogout={handleLogout} />
             </div>
-            <RoleSwitcher navigate={navigate} />
-            <h1>Welcome, {userName}!</h1>
+            
+            <DashboardHeader 
+                userName={userName} 
+                originalRole={originalRole} 
+            />
+
+            <hr />
             <div className="tabs">
                 <button onClick={() => setActiveTab('users')}>Users</button>
                 <button onClick={() => setActiveTab('menu')}>Menu</button>
@@ -60,7 +56,6 @@ const AdminDashboard = () => {
 
             <hr />
             <RoleSwitcher />
-            <hr />
         </div>
     );
 };

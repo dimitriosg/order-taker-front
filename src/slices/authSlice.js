@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // slices/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import { User } from '../types.ts';
@@ -5,7 +6,9 @@ import { User } from '../types.ts';
 const initialState = {
     token: null,
     role: null,
+    userID: null,
     userName: null,
+    userEmail: null,
     logoutSuccess: false,
 };
 
@@ -15,16 +18,18 @@ const authSlice = createSlice({
     reducers: {
         loginSuccess(state, action) {
             console.log("loginSuccess action called with payload:", action.payload);
-            const { token, role, userName } = action.payload;
+            const { token, role, userId, userName, userEmail } = action.payload;
 
             state.token = token;
             state.role = role;
             state.userName = userName;
+            state.userEmail = userEmail;
 
             // Update local storage here
             localStorage.setItem('token', token);
             localStorage.setItem('role', role);
             localStorage.setItem('userName', userName);
+            localStorage.setItem('userEmail', userEmail);
         },
         logout(state) {
             state.token = null;

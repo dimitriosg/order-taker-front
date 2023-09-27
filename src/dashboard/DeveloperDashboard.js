@@ -2,11 +2,12 @@
 /* eslint-disable no-undef */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './css/DeveloperDashboard.css';
+
 import OrdersSection from '../pages/OrdersSection.js';
 import RoleSwitcher from '../components/RoleSwitcher';
-import '../styles/DashboardStyles.css';  // Import the styles
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { DashboardHeader, LogoutButton, BackButton, useDashHooks } from './AllDashSetup.js'; 
+
+
 
 const DeveloperDashboard = () => {
   const navigate = useNavigate();
@@ -36,12 +37,14 @@ const DeveloperDashboard = () => {
   return (
     <div className="developer-dashboard">
       <div className="d-flex justify-content-between p-2">
-        <button onClick={() => navigate(-1)} className="btn btn-secondary">Back</button>
-        <button onClick={() => localStorage.clear()} className="btn btn-danger">Logout</button>
+          <BackButton onBack={() => navigate(-1)} />
+          <LogoutButton onLogout={useDashHooks} />
       </div>
 
-      <h1>Welcome, {userName}!</h1>
-      <p>You have the role of Developer</p>
+      <DashboardHeader 
+          userName={userName} 
+          originalRole={originalRole} 
+      />
 
       <hr />
       <RoleSwitcher />
