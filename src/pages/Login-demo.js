@@ -110,9 +110,24 @@ const Login = () => {
 
     } catch (error) { 
       setLoading(false); 
-      setError('Invalid credentials or error logging in.'); 
-      console.log('Error during login', error); 
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+        setError(error.response.data.message || 'Invalid credentials or error logging in.');
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+        setError('No response received from server.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+        setError(error.message);
+      }
     } 
+    
   }; 
 
   const handleForgotPassword = async () => { 
