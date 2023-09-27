@@ -8,12 +8,19 @@ import './css/WaiterDashboard.css';  // Import the CSS
 import LogoutButton from '../components/LogoutButton';
 import '../styles/DashboardStyles.css';  // Import the styles
 
+import WaiterNavbar from './components/Navbar/WaiterNavbar';
+import TablesSection from './components/Tables/TablesSection';
+import OrdersSummary from './components/Orders/OrdersSummary';
+
 
 
 const WaiterDashboard = () => {
-    const [tables, setTables] = useState([]);
+    //const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
     const userName = localStorage.getItem('userName');
+
+    const tables = [1, 2, 3, 4, 5, 6];  // Example table numbers
+    // as an example for now
 
     useEffect(() => {
         // Fetch the tables assigned to the waiter from the backend
@@ -25,7 +32,7 @@ const WaiterDashboard = () => {
         try {
             const response = await fetch('/api/tables');
             const data = await response.json();
-            setTables(data.tables);
+            //setTables(data.tables);
         } catch (error) {
             console.error('Error fetching assigned tables:', error);
         }
@@ -33,8 +40,11 @@ const WaiterDashboard = () => {
 
     return (
         <div className="waiter-dashboard">
+            <WaiterNavbar />
             <LogoutButton />
             <h1>Welcome, {localStorage.getItem('userName')}!</h1>
+            <hr />
+            <h2>Tables</h2>
             <div className="tables-grid">
                 {tables.map((table, index) => (
                     <TableBox
@@ -44,7 +54,10 @@ const WaiterDashboard = () => {
                     />
                 ))}
             </div>
+            <hr />
             {selectedTable && <OrderManager table={selectedTable} />}
+            <TablesSection />
+            <OrdersSummary />
         </div>
     );
 };
