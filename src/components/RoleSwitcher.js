@@ -16,7 +16,7 @@ const RoleSwitcher = () => {
     useEffect(() => {
         const fetchRoles = async () =>{
             try {
-                const response = await api.get('/api/roles');
+                const response = await api.get('/api/users/roles');
                 setRoles(response.data);
             } catch (error) {
                 console.error('Error fetching roles:', error);
@@ -78,7 +78,7 @@ const RoleSwitcher = () => {
             >
                 <option value="" disabled>Select role</option>
                 {roles.map((role, index) => (
-                    <option key={index} value={role.value}>{role.label}</option>
+                    <option key={index} value={role}>{role}</option>
                 ))}
             </select>
             <button onClick={handleApplyRole} className="btn btn-success m-2">
