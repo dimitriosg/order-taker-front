@@ -51,7 +51,7 @@ function AccountantDashboard() {
   return (
     <div>
       <div className="d-flex justify-content-between p-2">
-          <BackButton onBack={() => navigate(-1)} />
+          <BackButton onBack={() => navigate('/login')} />
           <LogoutButton onLogout={useDashHooks} />
       </div>
       <h1 class="welcome-msg-dash">Welcome, {name}!</h1>

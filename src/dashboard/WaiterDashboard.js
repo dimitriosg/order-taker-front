@@ -46,7 +46,7 @@ const WaiterDashboard = () => {
     return (
         <div className="waiter-dashboard">
             <div className="d-flex justify-content-between p-2">
-                <BackButton onBack={() => navigate(-1)} />
+                <BackButton onBack={() => navigate('/login')} />
                 <LogoutButton onLogout={useDashHooks} />
         </div>
         <DashboardHeader 
