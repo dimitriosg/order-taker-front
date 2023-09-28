@@ -81,9 +81,9 @@
 .dashboard-button {
   position: absolute;
   top: 1rem;
-  align-items: center;
-  right: 1rem;  /* Adjust the position to right */
-  margin: 0;  /* Reset the margin */
+  left: 0;  /* Set left to 0 */
+  right: 0;  /* Set right to 0 */
+  margin: 0 auto;  /* Set margin to auto */
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 5px;
@@ -93,6 +93,7 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
 
 .dashboard-button:hover {
   background-color: #cc8400;  /* Darken the color slightly on hover */
