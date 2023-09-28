@@ -11,6 +11,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 import '../styles/Login.css';  // Import the CSS 
 
+import { LogoutButton, useDashHooks } from './AllDashSetup.js'; 
+
+
 const BACKEND_URL="https://order-taker-back-5416a0177bda.herokuapp.com";
 
 // Create an axios instance with the base URL and withCredentials set to true
@@ -212,9 +215,12 @@ const Login = () => {
 
       {logoutSuccess && <p className="logout-successfully">Successfully logged out</p>}
       {role && (
-        <button className="dashboard-button" onClick={handleGoToDashboard}>Go to Dashboard</button>
+        <>
+          <button className="dashboard-button" onClick={handleGoToDashboard}>Go to Dashboard</button>
+          <LogoutButton onLogout={useDashHooks} />
+        </>
       )}
-
+      
       { !showForgotPassword ? ( 
         <div className="login-form">
           {/* Logo */}
