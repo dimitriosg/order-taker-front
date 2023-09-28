@@ -11,7 +11,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 import '../styles/Login.css';  // Import the CSS 
 
-import { LogoutButton, useDashHooks } from './AllDashSetup.js'; 
+import { LogoutButton, useDashHooks } from '../dashboard/AllDashSetup.js';
+
 
 
 const BACKEND_URL="https://order-taker-back-5416a0177bda.herokuapp.com";
