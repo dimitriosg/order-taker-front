@@ -81,6 +81,7 @@
 .dashboard-button {
   position: absolute;
   top: 1rem;
+  align-items: center;
   right: 1rem;  /* Adjust the position to right */
   margin: 0;  /* Reset the margin */
   padding: 0.5rem 1rem;
