@@ -8,7 +8,8 @@ import './dashCSS/AllDashStyles.css';
 import TableBox from './dashFunctions/TableBox.js';
 import OrderManager from './dashFunctions/OrderManager.js';
 
-import { DashboardHeader,LogoutButton, BackButton, useDashHooks } from './AllDashSetup.js'; 
+import { DashboardHeader,LogoutButton, BackButton, useDashHooks } 
+    from './AllDashSetup.js'; 
 
 import WaiterNavbar from '../components/NavBar/WaiterNavBar.js';
 import TablesSection from '../components/Tables/TablesSection.js';
@@ -17,6 +18,8 @@ import OrdersSummary from '../components/Orders/OrdersSummary.js';
 
 const WaiterDashboard = () => {
     const navigate = useNavigate();
+
+    const { handleLogout } = useDashHooks();
 
     //const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
@@ -47,7 +50,7 @@ const WaiterDashboard = () => {
         <div className="waiter-dashboard">
             <div className="d-flex justify-content-between p-2">
                 <BackButton onBack={() => navigate('/login')} />
-                <LogoutButton onLogout={useDashHooks} />
+                <LogoutButton onLogout={handleLogout} />
         </div>
         <DashboardHeader 
             userName={userName} 

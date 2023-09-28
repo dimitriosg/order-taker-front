@@ -169,6 +169,8 @@ const Login = () => {
     }
 };
 
+const { handleLogout } = useDashHooks();
+
   // Call this function whenever an Admin or Developer switches roles
   const switchRoleAndNavigate = (newRole) => {
     const currentRole = localStorage.getItem('role');
@@ -216,9 +218,11 @@ const Login = () => {
 
       {logoutSuccess && <p className="logout-successfully">Successfully logged out</p>}
       {role && (
-        <>
-          <button className="dashboard-button" onClick={handleGoToDashboard}>Go to Dashboard</button>
-          <LogoutButton onLogout={useDashHooks} />
+        <>        
+          <button 
+            className="dashboard-button" 
+            onClick={handleGoToDashboard}>Go to Dashboard</button>
+          <LogoutButton />
         </>
       )}
       

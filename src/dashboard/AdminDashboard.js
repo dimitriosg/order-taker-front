@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 // All Dashboard Setup + CSS (in 1 file)
 import './AllDashSetup.js'; 
-import { DashboardHeader, LogoutButton, BackButton, handleLogout } from './AllDashSetup.js'; 
+import { DashboardHeader, LogoutButton, BackButton, handleLogout } 
+    from './AllDashSetup.js'; 
 
 import RoleSwitcher from '../components/RoleSwitcher';
 

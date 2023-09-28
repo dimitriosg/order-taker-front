@@ -12,11 +12,14 @@ const LogoutButton = () => {
 
   const handleLogout = () => {
     dispatch(logout());  // This will clear the auth state and remove token, role, and userName from localStorage
+    localStorage.clear();  // Clear all data from local storage
     navigate('/login');  // Redirect to login page after logging out
   };
 
   return (
-    <button className="btn btn-primary" id="logout-button" onClick={handleLogout} >
+    <button 
+      className="btn btn-primary" 
+      id="logout-button" onClick={handleLogout} >
       Logout
     </button>
   );
