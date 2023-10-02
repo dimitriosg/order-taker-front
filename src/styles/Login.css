@@ -101,6 +101,8 @@
 }
 
 .logout-successfully {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
   display: inline-block;
   padding: 10px 20px;
   margin: 20px 0;
@@ -113,6 +115,10 @@
   width: 100%;
   box-sizing: border-box;
   transition: opacity 0.3s ease-in-out;
+}
+
+.fade-out .logout-successfully {
+  opacity: 0;
 }
 
 /* Optional: Add some animation to draw attention to the message */

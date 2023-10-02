@@ -9,10 +9,11 @@ import './dashCSS/AllDashStyles.css';
 function CashierDashboard() {
   const navigate = useNavigate();
 
+  const userName = localStorage.getItem('userName');
+  const [originalRole] = useState(localStorage.getItem('role'));
   const [cashHolding, setCashHolding] = useState(null);
   const [name, setName] = useState('');
-  const userName = localStorage.getItem('userName');
-  const [originalRole, setOriginalRole] = useState('Cashier');
+  
 
   useEffect(() => {
     // Fetch the current cash holding and the name of the cashier from the backend

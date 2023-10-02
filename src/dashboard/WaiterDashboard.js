@@ -24,8 +24,7 @@ const WaiterDashboard = () => {
     //const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
     const userName = localStorage.getItem('userName');
-    const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
-
+    const [originalRole] = useState(localStorage.getItem('role'));
 
     const tables = [1, 2, 3, 4, 5, 6];  // Example table numbers
     // as an example for now

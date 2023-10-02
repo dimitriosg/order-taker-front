@@ -2,7 +2,7 @@
 // src/App.js
 import React, { useEffect } from 'react';
 import AppRoutes from './AppRoutes';
-import store from './features/store.js';
+import store from './redux/store.js';
 
 import { BrowserRouter } from 'react-router-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
@@ -19,8 +19,14 @@ function App() {
 
 const ReduxContent = () => {
   const dispatch = useDispatch();
+
   const role = useSelector((state) => state.auth.role);
+  const userName = useSelector((state) => state.auth.userName);
+  const email = useSelector((state) => state.auth.userEmail);
+
   const logoutSuccess = useSelector((state) => state.auth.logoutSuccess);
+  const loginSuccess = useSelector((state) => state.auth.loginSuccess);
+
 
   useEffect(() => {
       dispatch(syncAuthState());

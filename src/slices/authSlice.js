@@ -6,9 +6,8 @@ import { User } from '../types.ts';
 const initialState = {
     token: null,
     role: null,
-    userID: null,
-    userName: null,
     userEmail: null,
+    userName: null,
     logoutSuccess: false,
 };
 
@@ -17,30 +16,28 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         loginSuccess(state, action) {
-            console.log("loginSuccess action called with payload:", action.payload);
-            const { token, role, userId, userName, userEmail } = action.payload;
+            console.log("(Slice)loginSuccess action called with payload:", action.payload);
 
-            state.token = token;
-            state.role = role;
-            state.userName = userName;
-            state.userEmail = userEmail;
-
-            // Update local storage here
-            localStorage.setItem('token', token);
-            localStorage.setItem('role', role);
-            localStorage.setItem('userName', userName);
-            localStorage.setItem('userEmail', userEmail);
+            state.token = action.payload.token;
+            state.role = action.payload.role;
+            state.userEmail = action.payload.userEmail;
+            state.userName = action.payload.userName;
         },
         logout(state) {
             state.token = null;
             state.role = null;
             state.userName = null;
+            state.userID = null;
+            state.userEmail = null;
+            
             state.logoutSuccess = true;
             
             // Clear local storage here
             localStorage.removeItem('token');
             localStorage.removeItem('role');
             localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userID');
         },
         resetLogoutSuccess(state) {
             state.logoutSuccess = false;
@@ -48,10 +45,17 @@ const authSlice = createSlice({
         syncAuthState(state){
             state.token = localStorage.getItem('token');
             state.role = localStorage.getItem('role');
+            state.userEmail = localStorage.getItem('userEmail');
             state.userName = localStorage.getItem('userName');
+            state.userID = localStorage.getItem('userID');
         }
     },
 });
+
+export const selectUserRole = (state) => state.auth.role;
+export const selectUserEmail = (state) => state.auth.userEmail;
+export const selectUserName = (state) => state.auth.userName;
+export const selectUserID = (state) => state.auth.userID;
 
 export const { loginSuccess, logout, resetLogoutSuccess, syncAuthState } = authSlice.actions;
 export default authSlice.reducer;

@@ -3,16 +3,16 @@
 
 // REDUX
 import { useDispatch, useSelector } from 'react-redux';
-import { loginSuccess } from '../slices/authSlice';
+import { loginSuccess, resetLogoutSuccess } from '../slices/authSlice';
 
 // REACT + others
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom'; 
+import { useLocation } from 'react-router-dom';
 import '../styles/Login.css';  // Import the CSS 
 
+import axios from 'axios'; // Import axios for making HTTP requests
 import { LogoutButton, useDashHooks } from '../dashboard/AllDashSetup.js';
-
 
 
 const BACKEND_URL="https://order-taker-back-5416a0177bda.herokuapp.com";
@@ -25,6 +25,9 @@ const api = axios.create({
 
 const Login = () => { 
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
+  const location = useLocation();
+
   const role = localStorage.getItem('role');
 
   const [email, setEmail] = useState(''); 
@@ -36,18 +39,25 @@ const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false); 
   //const [logoutSuccess, setLogoutSuccess] = useState(false); 
 
-  const dispatch = useDispatch();
+  const [fadeOut, setFadeOut] = useState(false);
   const logoutSuccess = useSelector(state => state.auth.logoutSuccess);
 
-//  useEffect(() => {
-//    api.get('/validate')
-//      .then(() => {
-//       console.log('User validated');
-//      })
-//      .catch(err => {
-//        console.error('Validation error', err);
-//      });
-//  }, []);
+  useEffect(() => {
+    if (location.pathname !== '/login') {
+      dispatch(resetLogoutSuccess());
+    }
+  }, [location.pathname, dispatch]);
+
+// Second useEffect to handle the fade-out logic
+useEffect(() => {
+    if (logoutSuccess) {
+      const timer = setTimeout(() => {
+        setFadeOut(true);
+        dispatch(resetLogoutSuccess());
+      }, 3000);  // 3 seconds
+      return () => clearTimeout(timer);  // Cleanup timer on component unmount
+    }
+  }, [logoutSuccess, dispatch]);
 
   const handleLogin = async () => { 
     setLoading(true); 
@@ -169,10 +179,10 @@ const Login = () => {
     }
 };
 
-const { handleLogout } = useDashHooks();
+  const { handleLogout } = useDashHooks();
 
   // Call this function whenever an Admin or Developer switches roles
-  const switchRoleAndNavigate = (newRole) => {
+  const switchRoleAndNavigate = (newRole, navigate) => {
     const currentRole = localStorage.getItem('role');
 
     // Check if the function is called by an Admin or Developer
@@ -216,7 +226,7 @@ const { handleLogout } = useDashHooks();
     <div className="login-container">
       <button className="back-button" onClick={() => navigate('/')}>Back</button>
 
-      {logoutSuccess && <p className="logout-successfully">Successfully logged out</p>}
+      {logoutSuccess && !fadeOut && <p className="logout-successfully">Successfully logged out</p>}
       {role && (
         <>        
           <button 

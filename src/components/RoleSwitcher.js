@@ -1,19 +1,37 @@
+// frontend\src\components\RoleSwitcher.js
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import {
+    setOriginalRole, 
+    setHasSwitchedRole, 
+    switchRoleAndNavigate 
+} from '../slices/roleSwitchSlice.js';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import api from '../api';
+import ErrorModal from './ErrorModal-danger';
+import { set } from 'mongoose';
+
 
 const RoleSwitcher = () => {
     console.log(localStorage);  // Debugging line
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
+    const location = useLocation();
 
-    const [roles, setRoles] = useState([]);
+    const originalRole = setOriginalRole;
     const [selectedRole, setSelectedRole] = useState('');
-    const [hasSwitchedRole, setHasSwitchedRole] = useState(false);
 
-    useEffect(() => {
+    const [hasSwitchedRole, setHasSwitchedRole] = useState(false);
+    const [hasAppliedRole, setHasAppliedRole] = useState(false);
+
+    const [roles, setRoles] = useState([]); // array of roles (dropdownlist)
+    const [isOnDashboard, setIsOnDashboard] = useState(location.pathname.includes('/dashboard/'));
+    // the above is tracker for whether or not the user is on the dashboard page
+
+    useEffect(() => { // fetching roles to dropdown list
         const fetchRoles = async () =>{
             try {
                 const response = await api.get('/api/users/roles');
@@ -25,49 +43,52 @@ const RoleSwitcher = () => {
         fetchRoles();
     }, []);
 
+    useEffect(() => { // Update isOnDashboard whenever the location changes
+        setIsOnDashboard(location.pathname.includes('/dashboard/'));
+    }, [location.pathname]);
+
+    useEffect(() => { // Update hasSwitchedRole based on selectedRole and originalRole
+        if (selectedRole !== originalRole) {
+            setHasSwitchedRole(true);
+        } else {
+            setHasSwitchedRole(false);
+        }
+    }, [originalRole, selectedRole]);
+
+    useEffect(() => { 
+        // logic here
+    }, []);//, dependencies
+
 
     const handleRoleChange = (event) => {
         setSelectedRole(event.target.value);
+        setSelectedRole(event.target.value);
+        console.log('(handleRoleChange) Selected Role:', selectedRole);
     };
 
-    const handleApplyRole = () => {
-        if (selectedRole) {
-            switchRoleAndNavigate(selectedRole, navigate);
-            setHasSwitchedRole(true);
-        }
+    const handleApplyRole = async () => {
+        dispatch(switchRoleAndNavigate({ newRole: selectedRole, navigate }))
+            .then((action) => {
+                if (action.payload.success) {
+                    dispatch(setSelectedRole(action.payload.newRole));
+                    dispatch(setHasSwitchedRole(true));
+                } else {
+                    // Handle error case
+                    window.displayError(action.payload.message);
+                }
+            });
     };
 
-    const handleRevertRole = () => {
-        if (hasSwitchedRole) {
-            switchRoleAndNavigate(originalRole, navigate);
-            setHasSwitchedRole(false);
-        }
+    const handleRevertRole = async () => {
+        dispatch(switchRoleAndNavigate({ newRole: originalRole, navigate }))  // pass an object with newRole and navigate
+          .then((action) => {
+            if (action.payload.success) {
+              setHasSwitchedRole(false);
+            }
+          });
     };
 
-    const switchRoleAndNavigate = (newRole, navigate) => {
-        localStorage.setItem('role', newRole);
-
-        switch (newRole) {
-            case 'admin':
-                navigate('/dashboard/AdminDashboard');
-                break;
-            case 'developer':
-                navigate('/dashboard/DeveloperDashboard');
-                break;
-            case 'accountant':
-                navigate('/dashboard/AccountantDashboard');
-                break;
-            case 'cashier':
-                navigate('/dashboard/CashierDashboard');
-                break;
-            case 'waiter':
-                navigate('/dashboard/WaiterDashboard');
-                break;
-            default:
-                navigate('/');
-        }
-    };
-
+    //////////////////////
     return (
         <div className="d-flex align-items-center">
             <select 
@@ -84,11 +105,23 @@ const RoleSwitcher = () => {
             <button onClick={handleApplyRole} className="btn btn-success m-2">
                 Apply
             </button>
-            {hasSwitchedRole && (
-                <button onClick={handleRevertRole} className="btn btn-warning m-2">
+            <hr className="m-2" />
+            
+            {console.log({hasSwitchedRole, isOnDashboard, hasAppliedRole})}
+            {/* {hasSwitchedRole && isOnDashboard && hasAppliedRole && ( */}
+            {/* OR */}
+            {/* { (isOnDashboard && hasSwitchedRole) && */}
+            { (isOnDashboard && hasSwitchedRole && hasAppliedRole) &&
+                <button 
+                    onClick={handleRevertRole} 
+                    className="btn btn-warning m-2"
+                    id="revert-to-original-role-button"
+                >
                     Revert to Original Role
                 </button>
-            )}
+            }
+            {/* )} */}
+            <ErrorModal />
         </div>
     );
 };

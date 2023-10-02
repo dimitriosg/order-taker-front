@@ -13,7 +13,7 @@ function AccountantDashboard() {
   const [cashHoldings, setCashHoldings] = useState([]);
   const [name, setName] = useState('');
   const userName = localStorage.getItem('userName');
-  const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
+  const [originalRole] = useState(localStorage.getItem('role'));
 
 
   useEffect(() => {

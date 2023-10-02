@@ -1,54 +1,29 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// src/dashboard/DeveloperDashboard.js
+import React, { useEffect, useState } from 'react';
+
+// All Dashboard Setup + CSS (in 1 file)
+import DashSetup from './AllDashSetup.js'; 
 
 import OrdersSection from '../pages/OrdersSection.js';
-import RoleSwitcher from '../components/RoleSwitcher';
-import { DashboardHeader, LogoutButton, BackButton, useDashHooks } from './AllDashSetup.js'; 
 
-
-
+////////////////////////////////
 const DeveloperDashboard = () => {
-  const navigate = useNavigate();
+
+  console.log(localStorage);  // Debugging line
+  const [userName, setUserName] = useState('');
+  const [originalRole] = useState(localStorage.getItem('role'));
   const [selectedRole, setSelectedRole] = useState('');
-  const [originalRole, setOriginalRole] = useState(localStorage.getItem('role'));
   const [hasSwitchedRole, setHasSwitchedRole] = useState(false);
-  const userName = localStorage.getItem('userName');
+  const [activeTab, setActiveTab] = useState('users');
 
-  const handleRoleChange = (event) => {
-    setSelectedRole(event.target.value);
-  };
-
-  const handleApplyRole = () => {
-    if (selectedRole) {
-      RoleSwitcher(selectedRole, navigate);
-      setHasSwitchedRole(true);
-    }
-  };
-
-  const handleRevertRole = () => {
-    if (hasSwitchedRole) {
-      RoleSwitcher(originalRole, navigate);
-      setHasSwitchedRole(false);
-    }
-  };
+  useEffect(() => {
+    setUserName(localStorage.getItem('userName') || 'User');
+}, []);
 
   return (
-    <div className="developer-dashboard">
-      <div className="d-flex justify-content-between p-2">
-          <BackButton onBack={() => navigate('/login')} />
-          <LogoutButton onLogout={useDashHooks} />
-      </div>
-
-      <DashboardHeader 
-          userName={userName} 
-          originalRole={originalRole} 
-      />
-
-      <hr />
-      <RoleSwitcher />
-      <hr />
+      <div className="developer-dashboard">
+        <DashSetup />
       
     </div>
   );
