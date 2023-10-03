@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUserRole, selectLoginSuccess } from '../slices/authSlice';
 import '../styles/Home.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Home = () => {
-  const isLoggedIn = localStorage.getItem('token') ? true : false;
-  const userRole = localStorage.getItem('role');
+  const userRole = useSelector(selectUserRole);
+  const isLoggedIn = useSelector(selectLoginSuccess);
   
   const dashboardPath = `/dashboard/${userRole}Dashboard`;
 
@@ -18,11 +20,11 @@ const Home = () => {
         <Link to={dashboardPath} className="btn btn-primary m-2">Go To Dashboard</Link>
       )}
 
-      <h1>Welcome to Order Taker</h1>
-      <p>Your one-stop solution for seamless order management.</p>
-       {!isLoggedIn && (
-        <Link to="/login" className="btn btn-primary m-2">Log In</Link>
-      )}
+      <h1 className="home-title" id="welcome-part-1">Welcome to<br />Order Taker</h1>
+      <p className="home-description">Your one-stop solution<br />for seamless order management.</p>
+
+        <Link to="/login" className="btn btn-primary m-2">Login Page</Link>
+
     </div>
   );
 };

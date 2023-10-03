@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
 // src/dashboard/AdminDashboard.js
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import RoleSwitcher from '../components/RoleSwitcher.js';
+import React, { useState } from 'react';
 
 // All Dashboard Setup + CSS (in 1 file)
 import DashSetup from './AllDashSetup.js'; 
@@ -12,19 +9,13 @@ import DashSetup from './AllDashSetup.js';
 
 ////////////////////////////////
 const AdminDashboard = () => {
-    console.log(localStorage);  // Debugging line
-    const [userName, setUserName] = useState('');
-    const [selectedRole, setSelectedRole] = useState('');
-    const [originalRole] = useState(localStorage.getItem('role'));    const [hasSwitchedRole, setHasSwitchedRole] = useState(false);
-    const [activeTab, setActiveTab] = useState('users');
+    const [activeTab, setActiveTab] = useState('users');  // This stays the same since it's local state
 
-    useEffect(() => {
-        setUserName(localStorage.getItem('userName') || 'User');
-    }, []);
 
     return (
         <div className="admin-dashboard">
             <DashSetup />
+
             <hr />
             <div className="tabs">
                 <button onClick={() => setActiveTab('users')}>Users</button>

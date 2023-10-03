@@ -2,14 +2,12 @@
 // src/dashboard/WaiterDashboard.js
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './dashCSS/AllDashStyles.css';
 
 import TableBox from './dashFunctions/TableBox.js';
 import OrderManager from './dashFunctions/OrderManager.js';
 
-import { DashboardHeader,LogoutButton, BackButton, useDashHooks } 
-    from './AllDashSetup.js'; 
+// All Dashboard Setup + CSS (in 1 file)
+import DashSetup from './AllDashSetup.js'; 
 
 import WaiterNavbar from '../components/NavBar/WaiterNavBar.js';
 import TablesSection from '../components/Tables/TablesSection.js';
@@ -17,14 +15,8 @@ import OrdersSummary from '../components/Orders/OrdersSummary.js';
 
 
 const WaiterDashboard = () => {
-    const navigate = useNavigate();
-
-    const { handleLogout } = useDashHooks();
-
     //const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
-    const userName = localStorage.getItem('userName');
-    const [originalRole] = useState(localStorage.getItem('role'));
 
     const tables = [1, 2, 3, 4, 5, 6];  // Example table numbers
     // as an example for now
@@ -47,14 +39,7 @@ const WaiterDashboard = () => {
 
     return (
         <div className="waiter-dashboard">
-            <div className="d-flex justify-content-between p-2">
-                <BackButton onBack={() => navigate('/login')} />
-                <LogoutButton onLogout={handleLogout} />
-        </div>
-        <DashboardHeader 
-            userName={userName} 
-            originalRole={originalRole} 
-        />
+            <DashSetup />
         <hr />
         <h2>Tables</h2>
         <div className="tables-grid">

@@ -1,4 +1,4 @@
-// src/components/ErrorModal.js
+// src/components/ErrorModal-danger.js
 
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '../slices/authSlice';
-import roleSwitchReducer from '../slices/roleSwitchSlice';
+import authReducer from '../slices/authSlice.js';
+import roleSwitchReducer from '../slices/roleSwitchSlice.js';
 
 const store = configureStore({
   reducer: {
