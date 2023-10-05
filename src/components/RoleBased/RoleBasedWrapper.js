@@ -12,9 +12,11 @@ const RoleBasedWrapper = ({ allowedRoles, children }) => {
   console.log('Allowed role:', allowedRoles);
   console.log('Available roles:', availableRoles);
 
-  if (!allowedRoles.every(currentRole => availableRoles.includes(currentRole))) {
-    console.log('Inside RoleBasedWrapper:', allowedRoles, availableRoles);
-    return <div>RoleBasedWrapper: Access Denied</div>;
+  if (currentRole === 'developer' || currentRole === 'admin') {
+    if (!allowedRoles.every(currentRole => availableRoles.includes(currentRole))) {
+      console.log('Inside RoleBasedWrapper:', allowedRoles, availableRoles);
+      return <div>RoleBasedWrapper: Access Denied</div>;
+    }
   }
 
   return children;

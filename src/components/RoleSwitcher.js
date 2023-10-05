@@ -135,7 +135,10 @@ const RoleSwitcher = () => {
     //////////////////////
     return (
         <div className="d-flex flex-column" id="role-switcher-container">
-            <div className="d-flex align-items-center mb-2" id="role-switcher-dropdown">
+            { !hasSwitchedRole ? (
+            <div 
+                className="d-flex align-items-center mb-2" 
+                id="role-switcher-dropdown">
                 <select 
                     value={temporaryRole || ""}
                     onChange={handleRoleChange} 
@@ -157,16 +160,18 @@ const RoleSwitcher = () => {
                 </button>
                 <hr className="m-2 w-100" />
             </div>
-    
-            { (isOnDashboard && hasSwitchedRole) &&
+            ) : (
+             (isOnDashboard && hasSwitchedRole) &&
                 <button 
-                    onClick={handleRevertRole} 
+                    onClick={() => {
+                        handleRevertRole();
+                    }} 
                     className="btn btn-warning m-2"
                     id="revert-to-original-role-button"
                 >
                     Revert to Original Role
                 </button>
-            }
+            )}
             <ErrorModal />
         </div>
     );

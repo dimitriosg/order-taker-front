@@ -116,8 +116,9 @@ const AllDashSetup = () => {
                 hasSwitchedRole={hasSwitchedRole}
                 selectedRole={temporaryRole} 
             />
-            <hr />
+            <hr id="role-switcher-divider-top" />
             <RoleSwitcher />
+            <hr id="role-switcher-divider-bottom" />
         </div>
     );
 };

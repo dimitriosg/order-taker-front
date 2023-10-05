@@ -1,0 +1,100 @@
+/* src/styles/menuItem.css */
+
+.menu-item-form, .menu-item-list {
+    display: grid;
+    gap: 20px;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+    background-color: #ffffff;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: 600;
+}
+
+input, textarea, select {
+    padding: 10px 15px;
+    border: 1px solid #d0d0d0;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 14px;
+    margin-bottom: 15px;
+    transition: border-color 0.3s;
+}
+
+.tabs, .menu-item-form button {
+    display: flex;
+    justify-content: center;
+}
+
+.tabs button, .menu-item-form button {
+    cursor: pointer;
+    background-color: #6c757d; /* A neutral grey */
+    color: #ffffff;
+    padding: 10px 20px; /* Increased padding for better visual appeal */
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin: 10px; /* Space between buttons */
+}
+
+.tabs button {
+    background-color: #28a745; /* A pleasant green */
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+button.selected {
+    background-color: #FFC107;  /* A pleasant yellow */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.menu-item-form button {
+    background-color: #007BFF; /* A modern blue */
+}
+
+/* Hover effects for the buttons */
+.tabs button:hover, .menu-item-form button:hover {
+    filter: brightness(0.9); /* Darken the button on hover */
+}
+
+.menu-management {
+    text-align: center;
+}
+
+.menu-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.menu-tabs button.selected {
+    background-color: #FFC107;  /* Same yellow as before */
+}

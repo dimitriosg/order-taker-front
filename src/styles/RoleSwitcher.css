@@ -17,3 +17,8 @@
     border-color: transparent;
     opacity: 0;
 }
+
+#role-switcher-container{
+    margin: -20px 0 0 0;
+    padding: 0;
+}

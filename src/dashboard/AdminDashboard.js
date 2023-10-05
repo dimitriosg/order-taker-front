@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars */
 // src/dashboard/AdminDashboard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AddMenuItem from '../components/Menu/AddMenuItems.js';
+import RemoveMenuItem from '../components/Menu/RemoveMenuItem.js';
 
 // All Dashboard Setup + CSS (in 1 file)
 import DashSetup from './AllDashSetup.js'; 
@@ -15,12 +18,12 @@ const AdminDashboard = () => {
     return (
         <div className="admin-dashboard">
             <DashSetup />
-
             <hr />
+
             <div className="tabs">
-                <button onClick={() => setActiveTab('users')}>Users</button>
-                <button onClick={() => setActiveTab('menu')}>Menu</button>
-                <button onClick={() => setActiveTab('orders')}>Orders</button>
+                <button className={activeTab === 'users' ? 'selected' : ''} onClick={() => setActiveTab('users')}>Users</button>
+                <button className={activeTab === 'menu' ? 'selected' : ''} onClick={() => setActiveTab('menu')}>Menu</button>
+                <button className={activeTab === 'orders' ? 'selected' : ''} onClick={() => setActiveTab('orders')}>Orders</button>
             </div>
             <div className="tab-content">
                 {activeTab === 'users' && <UsersTab />}
@@ -40,9 +43,16 @@ const UsersTab = () => {
 };
 
 const MenuTab = () => {
+    const [mode, setMode] = useState('add');
+    
     return (
-        <div className="menu-tab">
-            {/* Content for managing menu items */}
+        <div className="menu-management">
+            <div className="menu-tabs">
+                <button className={mode === 'add' ? 'selected' : ''} onClick={() => setMode('add')}>Add Item</button>
+                <button className={mode === 'remove' ? 'selected' : ''} onClick={() => setMode('remove')}>Remove Item</button>
+            </div>
+            {mode === 'add' && <AddMenuItem />}
+            {mode === 'remove' && <RemoveMenuItem />}
         </div>
     );
 };
