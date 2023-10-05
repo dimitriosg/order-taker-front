@@ -26,7 +26,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/RoleSwitcher.css';
 
 import api from '../api';
-import ErrorModal from './ErrorModal-danger';
+import { ErrorModal } from './Modals.js';
 import { set } from 'mongoose';
 
 

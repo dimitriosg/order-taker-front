@@ -1,3 +1,4 @@
+// src/components/Menu/AddMenuItems.js
 import React, { useState, useEffect } from 'react';
 import api from '../../api.js';
 import '../../styles/menuItem.css';
@@ -12,6 +13,11 @@ const AddMenuItem = () => {
     });
 
     const [categories, setCategories] = useState([]);
+    const [feedback, setFeedback] = useState({
+        visible: false,
+        type: '',  // 'success' or 'error'
+        message: ''
+    });
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -48,19 +54,42 @@ const AddMenuItem = () => {
         formUploadData.append('price', formData.price);
         formUploadData.append('description', formData.description);
         formUploadData.append('category', formData.category);
-        formUploadData.append('image', formData.image);
+        if (formData.image) {
+            formUploadData.append('image', formData.image, formData.image.name);
+        }
 
         try {
-            const response = await api.post('/api/menuItems/addMenuItem', formUploadData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+            const response = await api.post('/api/menuItems/addMenuItem', formUploadData); 
+
+            setFeedback({
+                visible: true,
+                type: 'success',
+                message: 'Menu item added successfully!'
             });
+
+            setTimeout(() => {
+                setFeedback(prevState => ({ ...prevState, visible: false }));
+            }, 2500);
+
+            setFormData({
+                name: '',
+                price: '',
+                description: '',
+                category: '',
+                image: null
+            });
+
             console.log(response.data);
             // Add a success message or redirect as needed
         } catch (error) {
-            console.error("Error adding menu item:", error.response ? error.response.data : error);
-            // Display error message to user
+            setFeedback({
+                visible: true,
+                type: 'error',
+                message: error.response ? error.response.data.error : 'Error adding menu item. Please try again.'
+            });
+            setTimeout(() => {
+                setFeedback(prevState => ({ ...prevState, visible: false }));
+            }, 2500);
         }
     }
 
@@ -112,6 +141,12 @@ const AddMenuItem = () => {
                 />
                 <button type="submit">Add Item</button>
             </form>
+            {feedback.visible && (
+            <div className={`popup ${feedback.type}`}>
+                {feedback.message}
+            </div>
+            )}
+
         </div>
     );
 }

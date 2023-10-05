@@ -1,4 +1,4 @@
-// src/components/ErrorModal-danger.js
+// src/components/Modals.js
 
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
@@ -34,4 +34,25 @@ const ErrorModal = ({ show, message, onClose }) => {
     );
 };
 
-export default ErrorModal;
+const ConfirmationModal = ({ show, message, onConfirm, onCancel }) => {
+    return (
+        <Modal show={show} centered onHide={onCancel}>
+            <Modal.Header closeButton>
+                <Modal.Title>Confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{message}</p>
+                <div className="d-flex justify-content-end">
+                    <button className="btn btn-secondary mr-2" onClick={onCancel}>Cancel</button>
+                    <button className="btn btn-danger" onClick={onConfirm}>Confirm</button>
+                </div>
+            </Modal.Body>
+        </Modal>
+    );
+};
+
+
+export { 
+    ErrorModal, 
+    ConfirmationModal 
+};

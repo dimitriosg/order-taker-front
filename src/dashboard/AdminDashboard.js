@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddMenuItem from '../components/Menu/AddMenuItems.js';
 import RemoveMenuItem from '../components/Menu/RemoveMenuItem.js';
+import GetAllMenuItems from '../components/Menu/GetAllMenuItems.js';
 
 // All Dashboard Setup + CSS (in 1 file)
 import DashSetup from './AllDashSetup.js'; 
@@ -50,9 +51,11 @@ const MenuTab = () => {
             <div className="menu-tabs">
                 <button className={mode === 'add' ? 'selected' : ''} onClick={() => setMode('add')}>Add Item</button>
                 <button className={mode === 'remove' ? 'selected' : ''} onClick={() => setMode('remove')}>Remove Item</button>
+                <button className={mode === 'get-all' ? 'selected' : ''} onClick={() => setMode('get-all')}>Show All Items</button>
             </div>
             {mode === 'add' && <AddMenuItem />}
             {mode === 'remove' && <RemoveMenuItem />}
+            {mode === 'get-all' && <GetAllMenuItems />}
         </div>
     );
 };

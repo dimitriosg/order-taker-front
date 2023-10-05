@@ -202,7 +202,7 @@ const Login = () => {
               Password:
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </label>
-            <button type="submit" disabled={loading}>
+            <button type="submit" id="login-button" disabled={loading}>
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>

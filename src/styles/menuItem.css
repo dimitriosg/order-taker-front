@@ -98,3 +98,95 @@ button:hover {
 .menu-tabs button.selected {
     background-color: #FFC107;  /* Same yellow as before */
 }
+
+.feedback-message.success {
+    color: green;
+}
+
+.feedback-message.error {
+    color: red;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.popup.success {
+    border: 1px solid green;
+}
+
+.popup.error {
+    border: 1px solid red;
+}
+
+.all-menu-items {
+    margin: 20px 0;
+    text-align: left;
+    padding-left: 40px;
+}
+
+.category-section {
+    margin-bottom: 20px;
+}
+
+.category-section h3 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.category-section ul {
+    list-style-type: none;
+    padding: 0;
+    padding-left: 0;
+}
+
+.menu-item-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-item-list ul li button {
+    margin-left: 10px; /* This will give some space between the item details and the button */
+}
+
+.success-message {
+    background-color: #DFF2BF;      /* Light green background color */
+    color: #4F8A10;                /* Dark green text color */
+    padding: 10px 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid #4F8A10;     /* Dark green border */
+    font-weight: bold;             /* Bold text */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);  /* Slight shadow for depth */
+    transition: opacity 0.3s ease; /* Smooth fade-out */
+}
+
+/* MODAL STYLES */
+.ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ReactModal__Content {
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    outline: none;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
