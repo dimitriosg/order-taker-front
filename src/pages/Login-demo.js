@@ -65,8 +65,16 @@ const Login = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.loginSuccess);
 
+  const [successMessage, setSuccessMessage] = useState('');
+
   const handleGoToDashboard = useHandleGoToDashboard(originalRole, navigate, setError);
   
+  useEffect(() => { // check if the user is logged in
+    if (isLoggedIn) {
+        handleGoToDashboard(); // or wherever you'd like to redirect to
+    }
+}, [isLoggedIn, handleGoToDashboard]);
+
 
   useEffect(() => { // fade-out logic
       if (logoutSuccess) {

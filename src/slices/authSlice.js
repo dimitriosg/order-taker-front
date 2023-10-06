@@ -4,12 +4,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 const initialState = {
-    userName: null,
-    role: null,
-    token: null,
+    userName: Cookies.get('userName') || null,
+    role: Cookies.get('role') || null,
+    token: Cookies.get('token') || null,
 
     logoutSuccess: false,
-    loginSuccess: false,
+    loginSuccess: !!Cookies.get('userName'), // set to true if userName cookie exists
 };
 
 const authSlice = createSlice({

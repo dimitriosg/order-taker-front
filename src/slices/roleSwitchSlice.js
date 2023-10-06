@@ -1,12 +1,14 @@
 // roleSwitchSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 
 // Define the initial state
 const initialState = {
-  originalRole: "",
+  originalRole: Cookies.get('role') || "",
   temporaryRole: "",
   hasSwitchedRole: false,
   hasAppliedRole: false,
+  currentRole: Cookies.get('role') || "",
 };
 
 // Define the async thunk

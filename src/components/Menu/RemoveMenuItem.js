@@ -14,6 +14,8 @@ const RemoveMenuItem = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [itemToRemove, setItemToRemove] = useState(null);
 
+    const [messageOpacity, setMessageOpacity] = useState(1);
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -52,12 +54,12 @@ const RemoveMenuItem = () => {
             await api.delete(`/api/menuItems/removeMenuItem/${itemToRemove}`);
             setMenuItems(menuItems.filter(item => item._id !== itemToRemove));
 
-            setSuccessMessage("Item removed successfully!");  // Set success message
+            setSuccessMessage("Item removed successfully!");
+            setMessageOpacity(1);
+
             setTimeout(() => {
-                // Start fading out the message
-                document.querySelector('.success-message').style.opacity = '0';
-                // Clear the message after the transition ends (0.3s as set in the CSS)
-                setTimeout(() => setSuccessMessage(''), 300);
+                setMessageOpacity(0); // Start fading out the message
+                setTimeout(() => setSuccessMessage(''), 300); // Clear the message after fade-out
             }, 2700);
         } catch (error) {
             console.error("Error removing menu item:", error.response ? error.response.data : error);
@@ -77,8 +79,12 @@ const RemoveMenuItem = () => {
 
             {/* Display success message */}
             {successMessage && 
-                <div className="success-message">{successMessage}
-            </div>}  
+                <div 
+                    className="success-message" 
+                    style={{ opacity: messageOpacity }}
+                    >
+                    {successMessage}
+                </div>}   
             
             <select 
                 value={selectedCategory} 
