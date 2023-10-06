@@ -7,6 +7,19 @@
     margin-bottom: 30px;
 }
 
+.dashboard-top-center {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure the button stays on top of other elements */
+}
+
+
 #logout-button {
     position: fixed;
     top: 10px;
@@ -49,11 +62,21 @@
     color: #0d6efd;  /* Bootstrap's primary color */
 }
 
-.role-msg-dash{
+.original-role-msg-dash{
     text-align: center;
     margin-bottom: 1.5rem;
 }
 
-#custom-width-role-selector{
+.selected-role-msg-dash{
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #0d6efd;  /* Bootstrap's primary color */
+}
+
+#custom-role-selector{
     max-width: 5cm;
+}
+
+#error-message-switch-role{
+    bottom: 10px;
 }

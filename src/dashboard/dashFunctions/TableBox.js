@@ -5,9 +5,10 @@ import '../dashCSS/TableBox.css';  // Import the CSS
 
 
 const TableBox = ({ table, onSelect }) => {
+    const tableName = `T${table.number}`;
     return (
         <div className="table-box" onClick={onSelect}>
-            <p>{table.name}</p>
+            <p>{tableName}</p>
         </div>
     );
 };

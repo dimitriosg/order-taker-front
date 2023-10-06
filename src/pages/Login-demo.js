@@ -3,51 +3,99 @@
 
 // REDUX
 import { useDispatch, useSelector } from 'react-redux';
-import { loginSuccess } from '../slices/authSlice';
 
-// REACT + others
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
-import { useNavigate } from 'react-router-dom'; 
-import '../styles/Login.css';  // Import the CSS 
+import { // for login/logout
+  loginSuccess as loginSuccessAction, 
+  resetLogoutSuccess, 
+  selectLoginSuccess, 
+  selectUserRole // Original Role
+} from '../slices/authSlice.js'; // original from db
+// logout is located on components/LogoutButton.js
 
+import { 
+  setOriginalRole, // copy from 'selectUserRole' in authSlice
+  setTemporaryRole, 
+  selectTemporaryRole,
+  switchRoleAndNavigate
+} from '../slices/roleSwitchSlice.js';
+
+// DASHBOARD COMPONENTS
 import { LogoutButton, useDashHooks } from '../dashboard/AllDashSetup.js';
 
+// REACT + others
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; 
+
+import Cookies from 'js-cookie';  // For setting cookies
+import api from '../api.js';  // For making HTTP requests
+import '../styles/Login.css';  // Import the CSS 
+import Home from '../pages/Home.js';
+
+import axios from 'axios'; // Import axios for making HTTP requests
+import { useHandleGoToDashboard } from '../utils/dashboardNavigation.js';
 
 
-const BACKEND_URL="https://order-taker-back-5416a0177bda.herokuapp.com";
-
-// Create an axios instance with the base URL and withCredentials set to true
-const api = axios.create({
-  baseURL: BACKEND_URL,
-  withCredentials: true,
-});
 
 const Login = () => { 
   const navigate = useNavigate(); 
-  const role = localStorage.getItem('role');
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-  const [email, setEmail] = useState(''); 
-  const [password, setPassword] = useState(''); 
+  ///////////////////////////////
+  // from AUTH slice
+  const originalRole = useSelector((state) => state.auth.role); // orinal role from db
+  const logoutSuccess = useSelector(state => state.auth.logoutSuccess); // logout success status
+///////////////////////////////
+  // from ROLE SWITCH slice
+  const temporaryRole = useSelector((state) => state.auth.role); // temporarily, just for definition
+  ///////////////////////////////
+  // for API
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
+  const token = Cookies.get('token');  // Get the token from cookies
+  ///////////////////////////////
+
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null); 
   const [forgotEmail, setForgotEmail] = useState(''); 
   const [forgotRole, setForgotRole] = useState(''); 
   const [showForgotPassword, setShowForgotPassword] = useState(false); 
-  //const [logoutSuccess, setLogoutSuccess] = useState(false); 
 
-  const dispatch = useDispatch();
-  const logoutSuccess = useSelector(state => state.auth.logoutSuccess);
+  const [fadeOut, setFadeOut] = useState(false);
+  const isLoggedIn = useSelector((state) => state.auth.loginSuccess);
 
-//  useEffect(() => {
-//    api.get('/validate')
-//      .then(() => {
-//       console.log('User validated');
-//      })
-//      .catch(err => {
-//        console.error('Validation error', err);
-//      });
-//  }, []);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleGoToDashboard = useHandleGoToDashboard(originalRole, navigate, setError);
+  
+  useEffect(() => { // check if the user is logged in
+    if (isLoggedIn) {
+        handleGoToDashboard(); // or wherever you'd like to redirect to
+    }
+}, [isLoggedIn, handleGoToDashboard]);
+
+
+  useEffect(() => { // fade-out logic
+      if (logoutSuccess) {
+        const timer = setTimeout(() => {
+          setFadeOut(true);
+        }, 3000);  // 3 seconds
+        return () => clearTimeout(timer);  // Cleanup timer on component unmount
+      }
+  }, [logoutSuccess, dispatch]);
+
+  useEffect(() => { // loads dashboard if user is already logged in
+    if (originalRole) {
+      setError('Loading dashboard...');
+      setLoading(false);
+
+      setTimeout(() => {
+        handleGoToDashboard();
+      }, 500);
+    }
+  }, [originalRole, handleGoToDashboard]);
+
 
   const handleLogin = async () => { 
     setLoading(true); 
@@ -57,60 +105,29 @@ const Login = () => {
       const response = await api.post('/api/users/authenticate', { 
         email, 
         password, 
+        role, 
+        token
       }); 
-      console.log('Response from login:', response);  // Log the response 
-
-      const token = response.data.token; 
-      localStorage.setItem('token', token); 
-      localStorage.setItem('role', response.data.role); 
-      localStorage.setItem('userName', response.data.name);  // Store the user's name
+      console.log('(Login-demo) Response from login:', response);  // Log the response 
 
       setLoading(false); 
-      dispatch(loginSuccess({ 
-        token: response.data.token, 
-        role: response.data.role, 
+      dispatch(loginSuccessAction({ 
         userName: response.data.name,
+        role: response.data.role,
+        token: response.data.token,
         user: {
-          _id: response.data._id, // from User model
           name: response.data.name,
-          email: response.data.email,
           role: response.data.role,
-          // map other properties from response.data to 
-          // properties defined in User interface
         }
       }));
       console.log('Login success action dispatched');
-      console.log('Role:', response.data.role);
 
-      // Delay navigation slightly to ensure localStorage is updated
-      setTimeout(() => {
-        // Redirect based on role
-        switch(response.data.role) {
-          case 'admin':
-              navigate('/dashboard/AdminDashboard');
-              break;
-          case 'accountant':
-              navigate('/dashboard/AccountantDashboard');
-              break;
-          case 'developer':
-              navigate('/dashboard/DeveloperDashboard');
-              break;
-          case 'cashier':
-              navigate('/dashboard/CashierDashboard');
-              break;
-          case 'waiter':
-              navigate('/dashboard/WaiterDashboard');
-              break;
-          default:
-              setError('Unrecognized role. Unable to redirect to dashboard.');
-              navigate('/');  // Default redirection if role is not recognized
-        }
-      }, 100);
+      if (!response.data.role) {
+        setError('Loading dashboard... Please wait.');
+        return;
+      }
 
-
-      // Redirect based on role
-
-
+      dispatch(setOriginalRole(response.data.role));
 
     } catch (error) { 
       setLoading(false); 
@@ -146,85 +163,35 @@ const Login = () => {
     } 
   }; 
 
-  const handleGoToDashboard = () => {
-    switch(role) {
-        case 'admin':
-            navigate('/dashboard/AdminDashboard');
-            break;
-        case 'accountant':
-            navigate('/dashboard/AccountantDashboard');
-            break;
-        case 'developer':
-            navigate('/dashboard/DeveloperDashboard');
-            break;
-        case 'cashier':
-            navigate('/dashboard/CashierDashboard');
-            break;
-        case 'waiter':
-            navigate('/dashboard/WaiterDashboard');
-            break;
-        default:
-            setError('Unrecognized role. Unable to redirect to dashboard.');
-            break;
-    }
-};
+  const handleRoleChange = (event) => {
+    const newRole = event.target.value;
+    dispatch(setTemporaryRole(newRole));
+  };
+  
 
-const { handleLogout } = useDashHooks();
+  const { handleLogout } = useDashHooks();
 
-  // Call this function whenever an Admin or Developer switches roles
-  const switchRoleAndNavigate = (newRole) => {
-    const currentRole = localStorage.getItem('role');
-
-    // Check if the function is called by an Admin or Developer
-    if (currentRole !== 'admin' && currentRole !== 'developer') {
-      console.error('Permission denied: Only Admins and Developers can switch roles.');
-      return;  // Exit the function if not an Admin or Developer
-    }
-
-    // Check if an Admin is trying to switch to Developer
-    if (currentRole === 'admin' && newRole === 'developer') {
-      console.error('Permission denied: Admins cannot switch to Developer role.');
-      return;  // Exit the function if an Admin is trying to switch to Developer
-    }
-
-    // Temporarily update the role in the local storage or in the state
-    localStorage.setItem('role', newRole);
-
-    // Navigate to the respective dashboard based on the new role
-    switch (newRole) {
-        case 'admin':
-            navigate('/dashboard/AdminDashboard');
-            break;
-        case 'developer':
-            navigate('/dashboard/DeveloperDashboard');
-            break;
-        case 'accountant':
-            navigate('/dashboard/AccountantDashboard');
-            break;
-        case 'cashier':
-            navigate('/dashboard/CashierDashboard');
-            break;
-        case 'waiter':
-            navigate('/dashboard/WaiterDashboard');
-            break;
-        default:
-            navigate('/');  // Default redirection if role is not recognized
-    }
-};
+  // Admin or Developer switches roles
+  const handleSwitchRoleAndNavigate = (newRole) => {
+    dispatch(setTemporaryRole(newRole));
+    dispatch(switchRoleAndNavigate({ newRole, navigate }));
+  };
 
   return (
     <div className="login-container">
       <button className="back-button" onClick={() => navigate('/')}>Back</button>
 
-      {logoutSuccess && <p className="logout-successfully">Successfully logged out</p>}
-      {role && (
-        <>        
-          <button 
-            className="dashboard-button" 
-            onClick={handleGoToDashboard}>Go to Dashboard</button>
-          <LogoutButton />
-        </>
+      {logoutSuccess && !fadeOut && <p className="logout-successfully">Successfully logged out</p>}
+
+      {isLoggedIn && (
+      <>        
+        <button 
+          className="dashboard-button" 
+          onClick={handleGoToDashboard}>Go to Dashboard</button>
+        <LogoutButton />
+      </>
       )}
+
       
       { !showForgotPassword ? ( 
         <div className="login-form">
@@ -243,7 +210,7 @@ const { handleLogout } = useDashHooks();
               Password:
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </label>
-            <button type="submit" disabled={loading}>
+            <button type="submit" id="login-button" disabled={loading}>
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>

@@ -1,28 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { DashboardHeader, LogoutButton, BackButton, useDashHooks } from './AllDashSetup.js'; 
-import './dashCSS/AllDashStyles.css';
 
-
+// All Dashboard Setup + CSS (in 1 file)
+import DashSetup from './AllDashSetup.js'; 
 
 function CashierDashboard() {
-  const navigate = useNavigate();
-
-  const [cashHolding, setCashHolding] = useState(null);
-  const [name, setName] = useState('');
-  const userName = localStorage.getItem('userName');
-  const [originalRole, setOriginalRole] = useState('Cashier');
-
-  useEffect(() => {
-    // Fetch the current cash holding and the name of the cashier from the backend
-    // Update `cashHolding` and `name` state
-    // Assume we have a function fetchCashierDetails() that returns the necessary data
-    // fetchCashierDetails().then(data => {
-    //   setCashHolding(data.cashHolding);
-    //   setName(data.name);
-    // });
-  }, []);
 
   const updateCashHolding = (newAmount) => {
     // Update the cash holding in the backend
@@ -43,18 +25,9 @@ function CashierDashboard() {
   };
 
   return (
-    <div>
-      <div className="d-flex justify-content-between p-2">
-          <BackButton onBack={() => navigate('/login')} />
-          <LogoutButton onLogout={useDashHooks} />
-      </div>
-      <DashboardHeader 
-          userName={userName} 
-          originalRole={originalRole} 
-      />
-      <p>Current Cash Holding: €{cashHolding?.amount || 0}</p>
-      <button onClick={() => updateCashHolding(cashHolding.amount + 100)}>Add €100</button>
-      <button onClick={notifyAccountant}>Notify Accountant</button>
+    <div className="cashier-dashboard">
+        <DashSetup />
+      
     </div>
   );
 }

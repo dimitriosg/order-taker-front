@@ -11,8 +11,7 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout());  // This will clear the auth state and remove token, role, and userName from localStorage
-    localStorage.clear();  // Clear all data from local storage
+    dispatch(logout()); 
     navigate('/login');  // Redirect to login page after logging out
   };
 
