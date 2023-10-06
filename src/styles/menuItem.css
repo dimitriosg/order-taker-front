@@ -1,6 +1,7 @@
 /* src/styles/menuItem.css */
 
-.menu-item-form, .menu-item-list {
+.menu-item-form, 
+.menu-item-list {
     display: grid;
     gap: 20px;
     max-width: 600px;
@@ -88,14 +89,18 @@ button:hover {
     text-align: center;
 }
 
-.menu-tabs {
+.menu-tabs,
+.user-tabs, 
+.order-tabs {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
 }
 
-.menu-tabs button.selected {
+.menu-tabs button.selected,
+.user-tabs button.selected,
+.order-tabs button.selected {
     background-color: #FFC107;  /* Same yellow as before */
 }
 

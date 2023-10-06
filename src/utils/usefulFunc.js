@@ -1,5 +1,5 @@
 // src/utils/usefulFunc.js
-export function displayMessage(message, type = "error", onCloseAllModals) {
+export function displayMessage(message, type = "error", onCloseAllModals, onOkClicked) {
     const messageBox = document.createElement("div");
     const messageText = document.createElement("p");
     const okButton = document.createElement("button");
@@ -12,6 +12,11 @@ export function displayMessage(message, type = "error", onCloseAllModals) {
          // Close all modals by invoking the callback
          if(onCloseAllModals) {
             onCloseAllModals();
+        }
+
+        // Invoke onOkClicked if provided
+        if(onOkClicked) {
+            onOkClicked();
         }
     };
 
