@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api.js';
 import '../../styles/menuItem.css';
-import { ConfirmationModal } from '../Modals.js';
+import { ConfirmationModalItem } from '../Modals.js';
 
 
 const RemoveMenuItem = () => {
@@ -106,7 +106,7 @@ const RemoveMenuItem = () => {
             ))}
 
             {/* The Confirmation Modal */}
-            <ConfirmationModal 
+            <ConfirmationModalItem 
                 show={showConfirmModal} 
                 message="Are you sure you want to remove this item from the menu?" 
                 onConfirm={confirmRemove}

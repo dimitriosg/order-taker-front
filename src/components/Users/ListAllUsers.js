@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api';
 
-import { ConfirmationModal } from '../../components/Modals.js';
+import { ConfirmationModalUser } from '../../components/Modals.js';
 import { displayMessage } from '../../utils/usefulFunc.js';
 
 const ListAllUsers = () => {
@@ -108,7 +108,7 @@ const ListAllUsers = () => {
             ))}
     
             {isModalVisible && selectedUser && (
-                <ConfirmationModal 
+                <ConfirmationModalUser 
                     show={isModalVisible}
                     successMessage={isSuccessModalVisible}
                     selectedUser={selectedUser}
