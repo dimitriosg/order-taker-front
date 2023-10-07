@@ -35,8 +35,7 @@ const ErrorModal = ({ show, message, onClose }) => {
     );
 };
 
-const ConfirmationModal_old = ({ show, message, onConfirm, onCancel, children }) => {
-    const statusOptions = ["Active", "Deactivated", "Locked"];
+const ConfirmationModalItem = ({ show, message, onConfirm, onCancel, children }) => {
 
     return (
         <Modal show={show} centered onHide={onCancel}>
@@ -58,7 +57,16 @@ const ConfirmationModal_old = ({ show, message, onConfirm, onCancel, children })
     );
 };
 
-const ConfirmationModal = ({ show, message, onConfirm, onCancel, selectedStatus, setSelectedStatus, selectedUser }) => {    const statusOptions = ["Active", "Deactivated", "Locked"];
+const ConfirmationModalUser = ({ 
+    show, 
+    message, 
+    onConfirm, 
+    onCancel, 
+    selectedStatus, 
+    setSelectedStatus, 
+    selectedUser 
+}) => { 
+    const statusOptions = ["Active", "Deactivated", "Locked"];
 
     const buttonStyles = (status) => ({
         backgroundColor: selectedStatus === status ? "#007BFF" : "#E0E0E0",  // Highlight selected status with a different color
@@ -76,15 +84,20 @@ const ConfirmationModal = ({ show, message, onConfirm, onCancel, selectedStatus,
                 <Modal.Title>Confirmation</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>{message.join("\n")}</p>
-                <div style={{ 
-                    display: "flex", 
-                    justifyContent: "space-between", 
-                    marginBottom: "20px" }
+                <p>{Array.isArray(message) ? message.join("\n") : message}</p>
+                <div 
+                    role="radiogroup"
+                    aria-label="Select status"
+                    style={{ 
+                        display: "flex", 
+                        justifyContent: "space-between", 
+                        marginBottom: "20px" }
                     }>
                     {statusOptions.map(status => (
                         <div key={status} style={{ marginBottom: "10px" }}>
                             <button 
+                                role="radio"
+                                aria-checked={selectedStatus === status}
                                 style={buttonStyles(status)}
                                 onClick={() => setSelectedStatus(status)}
                                 disabled={selectedUser && selectedUser.accountStatus === status}
@@ -92,6 +105,7 @@ const ConfirmationModal = ({ show, message, onConfirm, onCancel, selectedStatus,
                                 {status}
                             </button>
                             {selectedUser && selectedUser.accountStatus === status && (
+                            <>
                                 <div style={{ 
                                     fontSize: "12px", 
                                     color: "red", 
@@ -99,6 +113,7 @@ const ConfirmationModal = ({ show, message, onConfirm, onCancel, selectedStatus,
                                     }>
                                     current status
                                 </div>
+                            </>
                             )}
                         </div>
                     ))}
@@ -112,8 +127,54 @@ const ConfirmationModal = ({ show, message, onConfirm, onCancel, selectedStatus,
     );
 };
 
+const ConfirmationModalUserRemove = ({ 
+    show, 
+    message, 
+    onConfirm, 
+    onCancel, 
+    children, 
+    successMessage
+}) => {
+
+    const renderMessage = () => {
+        if (successMessage) {
+            return (
+                <p style={{ color: 'green', fontWeight: 'bold' }}>
+                    {successMessage}
+                </p>
+            );
+        }
+        if (Array.isArray(message)) {
+            return message.map((msg, idx) => <p key={idx}>{msg}</p>);
+        }
+        return <p>{message}</p>;
+    };
+
+    return (
+        <Modal show={show} centered onHide={onCancel}>
+            <Modal.Header closeButton>
+                <Modal.Title>Confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {renderMessage()} 
+                
+                <div className="d-flex justify-content-between my-2">
+                    {children}
+                </div>
+
+                <div className="d-flex justify-content-end">
+                    <button className="btn btn-secondary mr-2" onClick={onCancel}>Cancel</button>
+                    <button className="btn btn-danger" onClick={onConfirm}>Confirm</button>
+                </div>
+            </Modal.Body>
+        </Modal>
+    );
+};
+
 
 export { 
     ErrorModal, 
-    ConfirmationModal 
+    ConfirmationModalUser,
+    ConfirmationModalItem, 
+    ConfirmationModalUserRemove
 };

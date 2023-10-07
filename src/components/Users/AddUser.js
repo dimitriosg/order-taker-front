@@ -1,8 +1,9 @@
+// src/components/Users/AddUser.js
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import api from '../../api';
 
-import { ConfirmationModal } from '../Modals.js';
+import { ConfirmationModalUser } from '../Modals.js';
 import { displayMessage } from '../../utils/usefulFunc.js';
 
 import '../../styles/AddUser.css';
