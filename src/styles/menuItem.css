@@ -76,6 +76,10 @@ button:hover {
     background-color: #0056b3;
 }
 
+.table-status-buttons-selected {
+    background-color: #FFC107;
+}
+
 .menu-item-form button {
     background-color: #007BFF; /* A modern blue */
 }
@@ -91,7 +95,8 @@ button:hover {
 
 .menu-tabs,
 .user-tabs, 
-.order-tabs {
+.order-tabs, 
+.table-tabs {
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -100,7 +105,8 @@ button:hover {
 
 .menu-tabs button.selected,
 .user-tabs button.selected,
-.order-tabs button.selected {
+.order-tabs button.selected, 
+.table-tabs button.selected {
     background-color: #FFC107;  /* Same yellow as before */
 }
 
@@ -246,4 +252,61 @@ border-radius: 50%;
     border-radius: 8px;
     outline: none;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+#tablesToCreate, 
+#tablesToDelete {
+    width: 50%;
+    margin-left: 10px;
+}
+
+.small-button {
+    width: 48%;
+    padding: 5px 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    background-color: grey;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+.small-button:hover {
+    background-color: black;
+}
+
+.reservation-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Provides some spacing between items */
+    padding: 0 15px; /* Add padding to the sides of the container */
+}
+
+.reservation-item {
+    flex: 0 0 48%; /* Makes each item take up just under half the container width */
+    margin-bottom: 30px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for a card-like appearance */
+    padding: 10px;
+    border-radius: 5px; /* Optional: rounds the corners of each item */
+}
+
+.reservation-buttons {
+    margin-top: 15px; /* To add some space between the phone number and the buttons */
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-number {
+    font-size: 1.2em;  /* Adjust the value as needed to set the desired font size */
+    font-weight: bold; /* Makes the text bolder */
+    margin-bottom: 10px; /* Adds a little space below the table number */
+}
+
+.modify-form-buttons{
+    display: flex;
+}
+
+
+#no-bullet{
+    list-style-type: none;
 }

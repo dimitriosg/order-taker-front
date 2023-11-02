@@ -1,3 +1,4 @@
+// OrderBox.js
 import React from 'react';
 import '../../styles/OrderBox.css';  // Import the CSS
 
@@ -21,7 +22,7 @@ const OrderBox = ({ tableData }) => {
                 <div key={index}>
                     <div className="order-header">
                         Order #{order.orderId} <br />
-                        Status: <span className={`item-status ${order.status.replace(/[\s!]/g, "-").toLowerCase()}`}>{order.status}</span>
+                        status: <span className="item-status">{order.status}</span>
                         <button onClick={() => handleMarkAsServed(order.orderId)}>Mark as Served</button>
                         <hr />
                     </div>
