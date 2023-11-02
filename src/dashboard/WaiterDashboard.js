@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 // src/dashboard/WaiterDashboard.js
 
 import React, { useState, useEffect } from 'react';
@@ -10,13 +9,15 @@ import { selectUserName } from '../slices/authSlice.js';
 // All Dashboard Setup + CSS (in 1 file)
 import DashSetup from './AllDashSetup.js'; 
 
+import OrderBox from '../components/Orders/OrderBox.js';
+import TableBox from '../components/Tables/TableBox.js';
+
 import WaiterNavbar from '../components/NavBar/WaiterNavBar.js';
 import TablesSection from '../components/Tables/TablesSection.js';
 import OrdersSummary from '../components/Orders/OrdersSummary.js';
 
-import TableBox from './dashFunctions/TableBox.js';
 import OrderManager from './dashFunctions/OrderManager.js';
-import OrderBox from '../components/Orders/OrderBox.js';
+
 
 const tableDataExample = {
     tableName: "T1",
@@ -60,6 +61,32 @@ const WaiterDashboard = () => {
     const [selectedTableData, setSelectedTableData] = useState(null);
     const [ordersForSelectedTable, setOrdersForSelectedTable] = useState([]);
 
+    const handleUpdateStatus = async (tableId, newStatus) => {
+        try {
+            const response = await fetch(`/api/tables/${tableId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus }),
+            });
+    
+            const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to update table status.');
+            }
+    
+            // Update the tables in the local state or re-fetch them
+            dispatch(fetchAssignedTables(waiterID));
+    
+        } catch (error) {
+            console.error('Error updating table status:', error);
+            // You might also want to show a user-friendly error message using a toast or modal.
+        }
+    };
+    
+
 
     console.log('(Waiter Dash) waiterID is ', waiterID);
 
@@ -90,16 +117,10 @@ const WaiterDashboard = () => {
                 <h2>Tables</h2>
                 <div className="tables-grid">
                     {tables.map(table => (
-                        <TableBox 
-                            key={table.id} 
-                            table={table} 
-                            onSelect={
-                                () => handleTableClick(table)
-                            }
-                        />
+                        <TableBox key={table._id} table={table} onUpdateStatus={handleUpdateStatus} />
                     ))}
-                    
                 </div>
+
                 {selectedTableData && <OrderBox tableData={selectedTableData} />}
 
             <hr />

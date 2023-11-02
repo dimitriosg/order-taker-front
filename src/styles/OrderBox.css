@@ -37,11 +37,24 @@
     font-weight: bold;
 }
 
-.order-box ul li span.item-status {
-    background-color: #FA6900;
+.item-status {
     padding: 5px 10px;
     border-radius: 8px;
     color: #fff;
+}
+
+.item-status.in-progress {
+    background-color: yellow;
+    color: black; /* Adjusting text color for better contrast */
+}
+
+.item-status.ready-alert {
+    background-color: green;
+}
+
+
+.item-status.half-ready {
+    background-color: orange;
 }
 
 .order-item {
@@ -60,12 +73,6 @@
 
 .table-total {
   font-size: 30px; /* Adjust the value as desired */
-}
-
-.item-status{
-    font-size: 1.0rem;
-    font-weight: bold;
-    color: #0d6efd;
 }
 
 .order-header hr {
@@ -99,4 +106,20 @@
     to {
       left: 100%;
     }
+}
+
+/* Styles for the "Mark as Served" button */
+.order-box button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #2CA9D9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.order-box button:hover {
+    background-color: #2388ad; /* Darker shade of the original color */
 }
