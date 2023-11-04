@@ -17,7 +17,7 @@ const WaiterDashboard = () => {
     const dispatch = useDispatch();
     const tables = useSelector(selectTables);
     const assignedTables = useSelector(selectAssignedTables);
-    
+
     const [view, setView] = useState('tableSelection');
     const [categories, setCategories] = useState([]);
     const [currentTable, setCurrentTable] = useState(null); 
@@ -85,7 +85,7 @@ const WaiterDashboard = () => {
         </div>
 
         <div className="tables-grid">
-          {displayedTables
+          {displayedTables && displayedTables.length > 0 && displayedTables
             .slice() // Ensure a copy is made if the array is readonly
             .sort((a, b) => a.tableNumber - b.tableNumber)
             .map((table) => (
