@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+// src/components/Tables/GetAllTables.js
 import api from "../../api";
 import { useState, useEffect } from "react";
 import '../../styles/menuItem.css';

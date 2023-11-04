@@ -1,97 +1,75 @@
 // src/redux/dashSlice.js
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '../api.js'; 
 
-// Async thunk to fetch tables assigned to the waiter.
-export const fetchAssignedTables_original = createAsyncThunk('dashboard/fetchAssignedTables', async (waiterID) => {
-    const response = await fetch(`/api/tables?waiterID=${waiterID}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch tables.');
-    }
-    return await response.json();
+export const fetchTables = createAsyncThunk('dashboard/fetchTables', async () => {
+  const response = await api.get('/tables');
+  return response.data;
 });
 
-// MOCK Async thunk to fetch tables assigned to the waiter.
-export const fetchAssignedTables = createAsyncThunk('dashboard/fetchAssignedTables', async (waiterID) => {
-    // Mocked data for testing
-    const mockData = {
-        tables: [
-            { id: 1, number: 1 },
-            { id: 2, number: 2 },
-            { id: 3, number: 3 },
-            { id: 4, number: 4 },
-            { id: 5, number: 5 },
-        ]
-    };
-    return mockData;
+export const updateTableStatus = createAsyncThunk('dashboard/updateTableStatus', async ({ tableId, status }) => {
+  await api.patch(`/tables/${tableId}/status`, { status });
+  return { tableId, status };
 });
 
 
-// Async thunk to fetch orders for a specific table.
-export const fetchOrdersForTable = createAsyncThunk('dashboard/fetchOrdersForTable', async (tableID) => {
-    const response = await fetch(`/api/orders?tableID=${tableID}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch orders.');
-    }
-    return await response.json();
-});
+const initialState = {
+  all: [],
+  assigned: [], 
+  order: {},
+};
 
-
-const dashboardSlice = createSlice({
-    name: 'dashboard',
-    initialState: {
-        tables: [],
-        orders: [],
-        delayedOrders: [],
-        selectedTable: null,
-        status: 'idle',
-        error: null
+// Slice
+const dashSlice = createSlice({
+  name: 'dashboard',
+  initialState,
+  reducers: {
+    addItemToOrder: (state, action) => {
+      const { itemId, item } = action.payload;
+      if (state.order[itemId]) {
+        state.order[itemId].quantity += 1;
+      } else {
+        state.order[itemId] = { ...item, quantity: 1 };
+      }
     },
-    reducers: {
-        setTables: (state, action) => {
-            state.tables = action.payload;
-        },
-        setOrders: (state, action) => {
-            state.orders = action.payload;
-        },
-        addDelayedOrder: (state, action) => {
-            state.delayedOrders.push(action.payload);
-        },
-        removeDelayedOrder: (state, action) => {
-            state.delayedOrders = state.delayedOrders.filter(order => order.id !== action.payload.id);
-        },
-        selectTable: (state, action) => {
-            state.selectedTable = action.payload;
-        },
+    removeItemFromOrder: (state, action) => {
+      const { itemId } = action.payload;
+      if (state.order[itemId] && state.order[itemId].quantity > 1) {
+        state.order[itemId].quantity -= 1;
+      } else {
+        delete state.order[itemId];
+      }
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchAssignedTables.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchAssignedTables.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.tables = action.payload.tables;
-            })
-            .addCase(fetchAssignedTables.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message;
-            })
-            .addCase(fetchOrdersForTable.fulfilled, (state, action) => {
-                state.orders = action.payload.orders;
-            })
-            .addCase(fetchOrdersForTable.rejected, (state, action) => {
-                state.error = action.error.message;
-            });
-    }
+  },
+  extraReducers: {
+    [fetchTables.fulfilled]: (state, action) => {
+      state.all = action.payload.tables;
+      state.assigned = action.payload.tables.filter(table => table.waiterId === 'currentWaiterId');
+    },
+    [fetchTables.rejected]: (state, action) => {
+        // Handle the error state
+    },
+    [updateTableStatus.fulfilled]: (state, action) => {
+        // Reducer logic remains the same...
+    },
+    [updateTableStatus.rejected]: (state, action) => {
+        // Handle the error state
+    },
+    [updateTableStatus.fulfilled]: (state, action) => {
+      const { tableId, status } = action.payload;
+      const index = state.all.findIndex(table => table._id === tableId);
+      if (index !== -1) {
+        state.all[index].status = status;
+      }
+    },
+  }
 });
 
-export const {
-    setTables,
-    setOrders,
-    addDelayedOrder,
-    removeDelayedOrder,
-    selectTable
-} = dashboardSlice.actions;
+export const { addItemToOrder, removeItemFromOrder } = dashSlice.actions;
 
-export default dashboardSlice.reducer;
+// Selectors
+export const selectTables = state => state.dashboard.all;
+export const selectAssignedTables = state => state.dashboard.assigned;
+export const selectOrder = state => state.dashboard.order;
+
+export default dashSlice.reducer;

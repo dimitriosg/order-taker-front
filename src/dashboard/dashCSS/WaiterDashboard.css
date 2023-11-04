@@ -1,40 +1,147 @@
 /* src/dashboard/css/WaiterDashboard.css */
 
 .waiter-dashboard {
-    padding: 20px;
-    background-color: #f9f9f9;
-    min-height: 100vh;
-}
-/*
-.table-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-    margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
 }
 
+.table-filter-buttons {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button,
+.table-button {
+padding: 5px 10px; /* Smaller padding for all buttons */
+border: none;
+cursor: pointer;
+outline: none;
+transition: background-color 0.3s ease;
+margin: 2px; /* Margin around buttons to ensure spacing */
+flex: 1 1 auto; /* Allow buttons to grow and fill space */
+}
+
+.selected,
+.button:hover {
+  background-color: #FFC107; /* Style for hover and selected state */
+  color: white;
+}
+
+.tables-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+gap: 10px;
+}
 
 .table-box {
-    flex: 0 0 30%;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
+border: 1px solid #ddd;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 10px;
+margin: 10px;
+cursor: pointer;
+transition: transform 0.3s ease;
 }
-
 
 .table-box:hover {
-    transform: translateY(-5px);
+transform: translateY(-5px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.table-box .table-number {
-    font-size: 24px;
-    font-weight: bold;
+.table-free {
+  background-color: green;
 }
-*/
 
+.table-busy {
+background-color: red;
+}
+
+.table-reserved-free {
+background-color: yellow;
+}
+
+.table-reserved-busy {
+background-color: orange; /* or any color that signifies yellow + red */
+}
+
+.table-number {
+font-weight: bold;
+font-size: 1.5em;
+margin-bottom: 15px; /* Space between table number and buttons */
+}
+
+.table-buttons {
+display: flex;
+flex-direction: column;
+width: 100%;
+}
+
+.table-button-row {
+display: flex;
+width: 100%;
+justify-content: space-between;
+}
+
+.table-button {
+margin: 2px;
+flex: 1 1 auto; /* Allow buttons to grow and fill space */
+}
+
+/* For the second button in the first row to take full width */
+.table-button-row:first-child .table-button:nth-child(2) {
+flex: 2;
+}
+
+/* For the single button in the second and third row to take full width */
+.table-button-row:not(:first-child) .table-button {
+flex: 0 1 100%;
+}
+
+/**/
+
+/* Reserved indicator */
+.reserved-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #ffd700; /* Gold color to stand out */
+  color: #ffffff; /* White text for contrast */
+  padding: 2px 5px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.8em;
+  text-align: center;
+}
+
+/* Enter button styles */
+.enter-button {
+  padding: 10px 20px;
+  background-color: #4caf50; /* Green color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.enter-button:hover {
+  background-color: #388e3c; /* Darker green on hover */
+}
+
+/* Style adjustments for table-box to accommodate the absolute positioning of reserved-indicator */
+.table-box {
+  position: relative; /* Needed to position reserved-indicator absolutely within */
+  /* ... other styles */
+}
+
+/* You may want to add some padding at the bottom of .table-box to ensure the reserved-indicator does not overlap with anything else */
+.table-box {
+  padding-bottom: 30px; /* Adjust as necessary */
+  /* ... other styles */
+}
