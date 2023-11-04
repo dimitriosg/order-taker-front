@@ -68,8 +68,8 @@ const dashSlice = createSlice({
 export const { addItemToOrder, removeItemFromOrder } = dashSlice.actions;
 
 // Selectors
-export const selectTables = state => state.dashboard.all;
-export const selectAssignedTables = state => state.dashboard.assigned;
-export const selectOrder = state => state.dashboard.order;
+export const selectTables = (state) => state.dashboard.all;
+export const selectAssignedTables = (state) => state.dashboard.assigned;
+export const selectOrder = (state) => state.dashboard.order; 
 
 export default dashSlice.reducer;

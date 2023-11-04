@@ -30,25 +30,34 @@ flex: 1 1 auto; /* Allow buttons to grow and fill space */
 }
 
 .tables-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+/* For larger screens, ensure 3 tables per row */
+@media (min-width: 500px) {
+  .tables-grid {
+      grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .table-box {
-border: 1px solid #ddd;
-display: flex;
-flex-direction: column;
-align-items: center;
-padding: 10px;
-margin: 10px;
-cursor: pointer;
-transition: transform 0.3s ease;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: relative; /* Needed to position reserved-indicator absolutely within */
+  padding-bottom: 30px; /* Adjust as necessary */
 }
 
 .table-box:hover {
-transform: translateY(-5px);
-box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .table-free {
@@ -101,6 +110,24 @@ flex: 0 1 100%;
 }
 
 /**/
+.back-button-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;  /* Adjust padding as needed */
+}
+
+.status-free {
+  color: green;
+}
+
+.status-busy {
+  color: red;
+}
+
+.status-reserved {
+  color: rgb(255, 204, 0);
+}
 
 /* Reserved indicator */
 .reserved-indicator {
@@ -145,3 +172,4 @@ flex: 0 1 100%;
   padding-bottom: 30px; /* Adjust as necessary */
   /* ... other styles */
 }
+
