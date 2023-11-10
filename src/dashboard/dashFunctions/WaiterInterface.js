@@ -112,6 +112,24 @@ const WaiterInterface = () => {
                 </>
             )}
         </div>
+
+        <div className="tables-grid">
+          {displayedTables && displayedTables.length > 0 && displayedTables
+            .slice() // Ensure a copy is made if the array is readonly
+            .sort((a, b) => a.tableNumber - b.tableNumber)
+            .map((table) => (
+              <div key={table._id} className={`table-box ${getTableClassName(table.status)}`}>
+                <div className="table-number">T{table.tableNumber}</div>
+                {table.status.includes('reserved') && <div className="reserved-indicator">R</div>}
+                <button className="enter-button" onClick={() => handleEnterTable(table)}>ENTER</button>
+              </div>
+            ))}
+        </div>
+
+        {currentTable && <OrderInterface table={currentTable} />}
+        </>
+      )}
+    </div>
     );
 };
 
