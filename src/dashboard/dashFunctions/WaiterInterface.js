@@ -98,7 +98,7 @@ const WaiterInterface = () => {
             .map((table) => (
               <div key={table._id} className={`table-box ${getTableClassName(table.status)}`}>
                 <div className="table-number">T{table.tableNumber}</div>
-                {table.status.includes('RESERVED') && <div className="reserved-indicator">R</div>}
+                {table.status.includes('reserved') && <div className="reserved-indicator">R</div>}
                 <button className="enter-button" onClick={() => handleEnterTable(table)}>ENTER</button>
               </div>
             ))}
