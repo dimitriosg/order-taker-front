@@ -171,10 +171,60 @@ const ConfirmationModalUserRemove = ({
     );
 };
 
+const ReservationDetailsModal_old = ({ show, table, onClose }) => {
+    return (
+        <Modal show={show} centered onHide={onClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Reservation Details - Table #{table.tableNumber}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <h5>Table #{table.tableNumber}</h5>
+                <p><strong>Name:</strong> {table.reservation.name}</p>
+                <p><strong>Phone:</strong> {table.reservation.phone}</p>
+                <p><strong>Reserved At:</strong> {table.reservation.reservedAt}</p>
+                <p><strong>Hold Until:</strong> {table.reservation.releaseAt}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btn-secondary" onClick={onClose}>Close</button>
+            </Modal.Footer>
+        </Modal>
+    );
+};
+
+const ReservationDetailsModal = ({ show, table, onClose }) => {
+    if (!table) return null;
+
+    return (
+        <Modal show={show} centered onHide={onClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Reservation Details - Table #{table.tableNumber}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {table.reservation ? (
+                    <>
+                        <p><strong>Name:</strong> {table.reservation.name}</p>
+                        <p><strong>Phone:</strong> {table.reservation.phone}</p>
+                        <p><strong>Reserved At:</strong> {table.reservation.reservedAt}</p>
+                        <p><strong>Hold Until:</strong> {table.reservation.releaseAt}</p>
+                    </>
+                ) : (
+                    <p>No reservation details available.</p>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+                <div className="d-flex justify-content-end">
+                    <button className="btn btn-secondary" onClick={onClose}>Close</button>
+                </div>
+            </Modal.Footer>
+        </Modal>
+    );
+};
+
 
 export { 
     ErrorModal, 
     ConfirmationModalUser,
     ConfirmationModalItem, 
-    ConfirmationModalUserRemove
+    ConfirmationModalUserRemove, 
+    ReservationDetailsModal
 };
