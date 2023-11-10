@@ -134,7 +134,7 @@ flex: 0 1 100%;
   position: absolute;
   bottom: 5px;
   right: 5px;
-  background-color: #ffd700; /* Gold color to stand out */
+  background-color: orange;
   color: #ffffff; /* White text for contrast */
   padding: 2px 5px;
   border-radius: 50%;
