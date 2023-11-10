@@ -31,8 +31,21 @@ const GetAllTables = () => {
         return chunked_arr;
     };
 
-    const renderTableNumbers = (status) => {
-        const tableNumbers = tables.filter(t => t.status === status).map(t => t.tableNumber);
+    const renderTableNumbers = (status) => {     
+        let tableNumbers;
+
+        if (status === 'reserved') {
+            // Fetch tables with either 'reserved-free' or 'reserved-busy' status
+            tableNumbers = 
+                tables.filter(t => t.status === 'reserved-free' || t.status === 'reserved-busy')
+                .map(t => t.tableNumber);
+        } else {
+            // Fetch tables matching exact status ('free' or 'busy')
+            tableNumbers = 
+                tables.filter(t => t.status === status)
+                .map(t => t.tableNumber);
+        }
+
         const chunkedTableNumbers = chunkArray(tableNumbers, 10);
         return chunkedTableNumbers.map((chunk, idx) => (
             <div key={idx}>{chunk.join(', ')}</div>

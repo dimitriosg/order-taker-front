@@ -12,6 +12,11 @@ export const updateTableStatus = createAsyncThunk('dashboard/updateTableStatus',
   return { tableId, status };
 });
 
+export const fetchTableById = createAsyncThunk('dashboard/fetchTableById', async (tableId) => {
+  const response = await api.get(`/tables/${tableId}`);
+  return response.data;
+});
+
 
 const initialState = {
   all: [],
@@ -61,6 +66,21 @@ const dashSlice = createSlice({
       if (index !== -1) {
         state.all[index].status = status;
       }
+    },
+    [fetchTableById.fulfilled]: (state, action) => {
+      const fetchedTable = action.payload;
+      const index = state.all.findIndex(table => table._id === fetchedTable._id);
+      if (index !== -1) {
+        state.all[index] = fetchedTable; // Update the table data in the state
+      } else {
+        state.all.push(fetchedTable); // Add the fetched table if it's not already in the state
+      }
+    },
+    [fetchTableById.rejected]: (state, action) => {
+      // Handle the error case
+      // You can update the state to reflect the error
+      // For example, setting an error message or flag
+      state.fetchTableByIdError = action.error.message;
     },
   }
 });

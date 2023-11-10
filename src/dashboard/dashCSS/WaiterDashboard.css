@@ -134,13 +134,21 @@ flex: 0 1 100%;
   position: absolute;
   bottom: 5px;
   right: 5px;
-  background-color: #ffd700; /* Gold color to stand out */
-  color: #ffffff; /* White text for contrast */
+  background-color: orange;
+  color: #ffffff;
   padding: 2px 5px;
   border-radius: 50%;
   font-weight: bold;
   font-size: 0.8em;
   text-align: center;
+}
+
+.table-reserved-free {
+  background: linear-gradient(to right, yellow 50%, green 50%);
+}
+
+.table-reserved-busy {
+  background: linear-gradient(to right, yellow 50%, red 50%);
 }
 
 /* Enter button styles */
@@ -163,13 +171,7 @@ flex: 0 1 100%;
 
 /* Style adjustments for table-box to accommodate the absolute positioning of reserved-indicator */
 .table-box {
-  position: relative; /* Needed to position reserved-indicator absolutely within */
-  /* ... other styles */
-}
-
-/* You may want to add some padding at the bottom of .table-box to ensure the reserved-indicator does not overlap with anything else */
-.table-box {
-  padding-bottom: 30px; /* Adjust as necessary */
-  /* ... other styles */
+  position: relative;
+  padding-bottom: 30px;
 }
 
