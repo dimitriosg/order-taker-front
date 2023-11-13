@@ -22,6 +22,8 @@ import ReservedTables from '../components/Tables/ReservedTables.js';
 //import NewComponent3 from '../components/Tables/NewComponent3.js';
 
 // for the ORDERS
+import ListAllOrders from '../components/Orders/ListAllOrders.js';
+import SearchOrders from '../components/Orders/SearchOrders.js';
 
 
 // All Dashboard Setup + CSS (in 1 file)
@@ -77,7 +79,7 @@ const UsersTab = () => {
 };
 
 const MenuTab = () => {
-    const [mode, setMode] = useState('add');
+    const [mode, setMode] = useState('get-all');
     
     return (
         <div className="menu-management">
@@ -94,9 +96,20 @@ const MenuTab = () => {
 };
 
 const OrdersTab = () => {
+    const [mode, setMode] = useState('all');
+
     return (
-        <div className="orders-tab">
-            {/* Content for managing orders */}
+        <div className="orders-management">
+            <div className="orders-tabs">
+                <button id="orders-all" className={mode === 'all' ? 'selected' : ''} 
+                    onClick={() => setMode('all')}
+                >All</button>
+                <button className={mode === 'search' ? 'selected' : ''} 
+                    onClick={() => setMode('search')}
+                >Search</button>
+            </div>
+            {mode === 'all' && <ListAllOrders />}
+            {mode === 'search' && <SearchOrders />}
         </div>
     );
 };
