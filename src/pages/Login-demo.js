@@ -2,7 +2,10 @@
 // frontend\src\pages\Login-demo.js
 
 // REDUX
-import { useDispatch, useSelector } from 'react-redux';
+import { 
+  useDispatch, 
+  useSelector 
+} from 'react-redux';
 
 import { // for login/logout
   loginSuccess as loginSuccessAction, 
@@ -19,8 +22,15 @@ import {
   switchRoleAndNavigate
 } from '../slices/roleSwitchSlice.js';
 
+import {
+  setUserEmail
+} from '../slices/dashSlice.js';
+
 // DASHBOARD COMPONENTS
-import { LogoutButton, useDashHooks } from '../dashboard/AllDashSetup.js';
+import { 
+  LogoutButton, 
+  useDashHooks 
+} from '../dashboard/AllDashSetup.js';
 
 // REACT + others
 import React, { useState, useEffect, useCallback } from 'react';
@@ -35,7 +45,6 @@ import axios from 'axios'; // Import axios for making HTTP requests
 import { useHandleGoToDashboard } from '../utils/dashboardNavigation.js';
 
 
-
 const Login = () => { 
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
@@ -45,10 +54,14 @@ const Login = () => {
   // from AUTH slice
   const originalRole = useSelector((state) => state.auth.role); // orinal role from db
   const logoutSuccess = useSelector(state => state.auth.logoutSuccess); // logout success status
-///////////////////////////////
+  ///////////////////////////////
   // from ROLE SWITCH slice
   const temporaryRole = useSelector((state) => state.auth.role); // temporarily, just for definition
   ///////////////////////////////
+  // from DASH slice
+  const userEmail = useSelector(state => state.dashboard.email);
+  ///////////////////////////////
+
   // for API
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -73,8 +86,7 @@ const Login = () => {
     if (isLoggedIn) {
         handleGoToDashboard(); // or wherever you'd like to redirect to
     }
-}, [isLoggedIn, handleGoToDashboard]);
-
+  }, [isLoggedIn, handleGoToDashboard]);
 
   useEffect(() => { // fade-out logic
       if (logoutSuccess) {
@@ -96,6 +108,7 @@ const Login = () => {
     }
   }, [originalRole, handleGoToDashboard]);
 
+  const { handleLogout } = useDashHooks();
 
   const handleLogin = async () => { 
     setLoading(true); 
@@ -114,6 +127,7 @@ const Login = () => {
       dispatch(loginSuccessAction({ 
         userName: response.data.name,
         role: response.data.role,
+        userEmail: response.data.email,
         token: response.data.token,
         user: {
           name: response.data.name,
@@ -122,12 +136,19 @@ const Login = () => {
       }));
       console.log('Login success action dispatched');
 
+      // check if email and role are available
+      if(!response.data.email){
+        setError('Loading dashboard... Please wait.');
+        return;
+      }
+
       if (!response.data.role) {
         setError('Loading dashboard... Please wait.');
         return;
       }
 
       dispatch(setOriginalRole(response.data.role));
+      dispatch(setUserEmail(response.data.email));
 
     } catch (error) { 
       setLoading(false); 
@@ -148,6 +169,12 @@ const Login = () => {
         setError(error.message);
       }
     } 
+
+    if (!userEmail) {
+      // Handle the case where email is not available
+      console.error("User email is not available");
+      return null; // or some other handling
+    }
     
   }; 
 
@@ -168,9 +195,6 @@ const Login = () => {
     dispatch(setTemporaryRole(newRole));
   };
   
-
-  const { handleLogout } = useDashHooks();
-
   // Admin or Developer switches roles
   const handleSwitchRoleAndNavigate = (newRole) => {
     dispatch(setTemporaryRole(newRole));

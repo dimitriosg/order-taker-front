@@ -1,43 +1,46 @@
+// src/components/Orders/OrderBox.js
 import React from 'react';
-import '../../styles/OrderBox.css';  // Import the CSS
+import '../../styles/OrderBox.css';
 
-const OrderBox = ({ tableData }) => {
+const OrderBox = ({ order, onOrderUpdate, onOrderCancel }) => {
+    console.log("Received order in OrderBox:", order);
+
     const calculateOrderTotal = (items) => {
         return items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    };
+    };    
 
-    const tableTotal = tableData.orders.reduce((acc, order) => acc + calculateOrderTotal(order.items), 0);
-
-    const handleMarkAsServed = (orderId) => {
-        // Make API call or dispatch an action to mark the order as served
-        console.log(`Mark order ${orderId} as served.`);
-        // TODO: Implement this functionality
-    };
+    // Check if 'order' and 'order.items' exist and 'order.items' is not empty
+    if (!order || !order.items || order.items.length === 0) {
+        return <div className="order-box">No order details available.</div>;
+    }
+    
+    const totalAmount = calculateOrderTotal(order.items);
 
     return (
         <div className="order-box">
-            <h2>{tableData.tableName}</h2>
-            {tableData.orders.map((order, index) => (
-                <div key={index}>
-                    <div className="order-header">
-                        Order #{order.orderId} <br />
-                        Status: <span className={`item-status ${order.status.replace(/[\s!]/g, "-").toLowerCase()}`}>{order.status}</span>
-                        <button onClick={() => handleMarkAsServed(order.orderId)}>Mark as Served</button>
-                        <hr />
-                    </div>
-                    <ul>
-                        {order.items.map((item, itemIndex) => (
-                            <li key={itemIndex} className="order-item no-border">
-                                <span className="item-name">{item.quantity} x {item.name}</span>
-                                <span>{item.price * item.quantity}€</span>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className="order-total">General Total: {calculateOrderTotal(order.items)}€</div>
-                    <hr id="order-divider"/>
-                </div>
-            ))}
-            <div className="table-total">Table Total: {tableTotal}€</div>
+            <h2>Order # <br /> 
+                {order.orderID}
+            </h2>
+            <ul>
+                {order.items.map((item, index) => (
+                    <li key={item._id}> {/* Use a unique identifier */}
+                        {item.quantity} x {item.name}: {(item.price * item.quantity).toFixed(2)}€
+                    </li>
+                ))}
+            </ul>
+
+            <p>
+                Total Amount: {totalAmount.toFixed(2)}€ <br />
+                Status: {order.status}
+            </p>
+
+            <span style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                gap: '15px',
+                marginTop: '5px' 
+            }}>
+            </span>
         </div>
     );
 };

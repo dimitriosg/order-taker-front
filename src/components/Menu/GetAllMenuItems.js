@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 // src/components/Menu/GetAllMenuItems.js
 import React, { useState, useEffect } from 'react';
 import api from '../../api.js';
 import '../../styles/menuItem.css';
 
-const GetAllMenuItems = () => {
+const GetAllMenuItems = ({ onAddToOrder }) => {
     const [menuItems, setMenuItems] = useState({});
     const [showImages, setShowImages] = useState(true);
 
@@ -28,15 +29,11 @@ const GetAllMenuItems = () => {
 
     return (
         <div className="all-menu-items">
-            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                <label className="switch">
-                    <input 
-                        type="checkbox" 
-                        checked={showImages} 
-                        onChange={() => setShowImages(prev => !prev)} 
-                    />
-                    <span className="slider round"></span>
-                </label>
+            <div style={{ 
+                textAlign: 'right', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'flex-end' }}>
                 <span style={{ 
                     marginRight: '20px',
                     fontWeight: '600',
@@ -45,9 +42,7 @@ const GetAllMenuItems = () => {
                     fontSize: '0.95em',
                     letterSpacing: '0.5px'
                 }}>
-                    {showImages ? "Hide Images" : "Show Images"}
                 </span>
-
             </div>
 
             {Object.keys(menuItems).map(category => (
@@ -69,6 +64,7 @@ const GetAllMenuItems = () => {
                     </ul>
                 </div>
             ))}
+
         </div>
     );
 }

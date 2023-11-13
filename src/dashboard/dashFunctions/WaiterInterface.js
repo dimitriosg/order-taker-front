@@ -15,6 +15,10 @@ import '../dashCSS/WaiterDashboard.css';
 import OrderInterface from './OrderInterface.js';
 import TableInterface from './TableInterface.js';
 
+import OrdersSummary from '../../components/Orders/OrdersSummary.js';
+import OrderBox from '../../components/Orders/OrderBox.js';
+
+
 const WaiterInterface = () => {
     const dispatch = useDispatch();
     const tables = useSelector(selectTables);
@@ -24,6 +28,8 @@ const WaiterInterface = () => {
     const [view, setView] = useState('tableSelection');
     const [currentTable, setCurrentTable] = useState(null); 
     const [showTableInterface, setShowTableInterface] = useState(false);
+    const [selectedTable, setSelectedTable] = useState(null);
+
 
     useEffect(() => {
         dispatch(fetchTables());
@@ -70,6 +76,16 @@ const WaiterInterface = () => {
 
     const handlePlaceOrder = () => {
         // Logic to handle order placement
+    };
+
+    const handleOrderUpdate = (order) => {
+        // Logic to handle order update
+        console.log('Updating order:', order);
+    };
+    
+    const handleOrderCancel = (order) => {
+    // Logic to handle order cancellation
+    console.log('Cancelling order:', order);
     };
 
     return (

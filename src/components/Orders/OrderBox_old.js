@@ -1,4 +1,4 @@
-// OrderBox.js
+// src/components/Orders/OrderBox_old.js
 import React from 'react';
 import '../../styles/OrderBox.css';  // Import the CSS
 
