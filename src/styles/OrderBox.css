@@ -4,7 +4,7 @@
     padding: 15px;
     width: 300px; /* adjust as per your need */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 15px 0;
+    margin: 15px auto;
 }
 
 .order-box h2 {

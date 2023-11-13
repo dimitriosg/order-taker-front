@@ -4,6 +4,25 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 
+import GetAllMenuItems from './Menu/GetAllMenuItems.js';
+
+
+const MenuModal = ({ show, onAddToOrder, onClose }) => {
+    return (
+        <Modal show={show} onHide={onClose} size="lg" centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Menu</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <GetAllMenuItems onAddToOrder={onAddToOrder} />
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btn-secondary" onClick={onClose}>Close</button>
+            </Modal.Footer>
+        </Modal>
+    );
+};
+
 const ErrorModal = ({ show, message, onClose }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [showErrorModal, setShowErrorModal] = useState(false);
@@ -226,5 +245,6 @@ export {
     ConfirmationModalUser,
     ConfirmationModalItem, 
     ConfirmationModalUserRemove, 
-    ReservationDetailsModal
+    ReservationDetailsModal, 
+    MenuModal,
 };

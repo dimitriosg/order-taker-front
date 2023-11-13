@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 const initialState = {
     userName: Cookies.get('userName') || null,
     role: Cookies.get('role') || null,
+    userEmail: Cookies.get('userEmail') || null,
     token: Cookies.get('token') || null,
 
     logoutSuccess: false,
@@ -21,6 +22,7 @@ const authSlice = createSlice({
 
             state.userName = action.payload.userName;
             state.role = action.payload.role;
+            state.userEmail = action.payload.userEmail;
             state.token = action.payload.token;
 
             state.loginSuccess = true;
@@ -28,19 +30,22 @@ const authSlice = createSlice({
             // Set cookies
             Cookies.set('userName', action.payload.userName, { expires: 2 });
             Cookies.set('role', action.payload.role, { expires: 2 });
+            Cookies.set('userEmail', action.payload.userEmail, { expires: 2 });
             Cookies.set('token', action.payload.token, { expires: 2, secure: true });
         },
         logout(state) {
             state.userName = null;
             state.role = null;
-            state.token = null;     
-                         
+            state.userEmail = null;
+            state.token = null; 
+            
             state.logoutSuccess = true; // LOGOUT SUCCESS
 
             state.loginSuccess = false; // login success
 
             // Remove all cookies
             Cookies.remove('userName');
+            Cookies.remove('userEmail');
             Cookies.remove('role');
             Cookies.remove('token');
         },
