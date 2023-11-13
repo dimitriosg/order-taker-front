@@ -158,10 +158,15 @@ button:hover {
     text-align: center;
 }
 
+#orders-all{
+    margin-left: 50px;
+}
+
 .menu-tabs,
 .user-tabs, 
 .order-tabs, 
-.table-tabs {
+.table-tabs, 
+.orders-tabs {
     display: flex;
     justify-content: center;
     gap: 10px;

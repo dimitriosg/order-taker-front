@@ -47,18 +47,11 @@ const GetAllMenuItems = ({ onAddToOrder }) => {
 
             {Object.keys(menuItems).map(category => (
                 <div key={category} className="category-section">
-                    <h3>{category}</h3>
-                    <ul>
+                    <h3 style={{ textAlign: 'center' }}>{category}</h3>
+                    <ul style={{ paddingLeft: '30px' }}>
                         {menuItems[category].map(item => (
                             <li key={item._id}>
-                                {showImages && (
-                                    <img
-                                    src={item.image ? `/api/image/${item.image}` : "/uploads/no-image.png"}
-                                    alt={item.name}
-                                    style={{ width: '0.7cm', height: '0.7cm', objectFit: 'cover' }}
-                                    />
-                                )}
-                                {item.name} - {item.price}€
+                                {item.name} {'>'} {item.price}€
                             </li>
                         ))}
                     </ul>
