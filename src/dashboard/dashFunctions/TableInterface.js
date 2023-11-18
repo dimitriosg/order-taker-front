@@ -1,5 +1,5 @@
 // src/dashboard/dashFunctions/TableInterface.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
     selectOrder, 
@@ -8,7 +8,11 @@ import {
     placeNewOrder, 
     addNewOrder
 } from '../../slices/dashSlice.js';
-import { ConfirmationModalItem, ReservationDetailsModal } from '../../components/Modals.js';
+
+import { 
+    ConfirmationModalItem, 
+    ReservationDetailsModal 
+} from '../../components/Modals.js';
 
 import api from '../../api.js';
 
@@ -16,7 +20,7 @@ import OrderBox from '../../components/Orders/OrderBox.js';
 import MenuForOrder from '../../components/Menu/MenuForOrder.js';
 
 import './dashFuncStyles/TableInterface.css';
-//import { isAction } from '@reduxjs/toolkit';
+
 
 const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
     const dispatch = useDispatch();
@@ -25,11 +29,29 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [showReservationDetails, setShowReservationDetails] = useState(false);
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
-    const [currentOrder, setCurrentOrder] = useState({ items: [], orderID: '', status: 'created' });
+    const [currentOrder, setCurrentOrder] = useState({ 
+        items: [], orderID: '', status: 'pending' });
+
+    // for countdown cancellation
+    const [isProcessingOrder, setIsProcessingOrder] = useState(false);
+    const [countdown, setCountdown] = useState(60);
+    const countdownTimer = useRef(null);
+
+    // New state to track background countdown orders
+    //const [backgroundCountdownOrders, setBackgroundCountdownOrders] = useState({});
+
 
     const orders = useSelector(selectOrder) || [];
     const activeOrders = orders.filter(order => order.status !== 'cancelled');
     const userEmail = useSelector(state => state.dashboard.email);
+
+    console.log('ON TOP: ActiveOrders:', activeOrders);
+    console.log('COUNT of ActiveOrders:', activeOrders.length);
+
+    console.log('ActiveOrders:', activeOrders);
+    console.log('(ActiveOrders) Is Placing Order:', isPlacingOrder);
+
+
 
     useEffect(() => {
         if (table._id) dispatch(fetchOrdersForTable(table._id));
@@ -41,8 +63,14 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
     }
 
     const calculateTotalAmount = () => {
-        return currentOrder.items.reduce((total, item) => total + item.totalPrice, 0);
-    };    
+        if (currentOrder.items && currentOrder.items.length > 0) {
+            return currentOrder.items.reduce((total, item) => {
+                return total + (item.totalPrice ? item.totalPrice : 0);
+            }, 0);
+        } else {
+            return 0;
+        }
+    };
 
     const handleStatusChange = async (newStatus) => {
         const updatedStatus = table.status.includes('reserved') && newStatus === 'busy' 
@@ -68,6 +96,19 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
             const response = await api.get(`/orders/generateOrderNumber?tableNumber=${initialTable.tableNumber}&isReserved=${initialTable.status.includes('reserved')}`);
             const generatedOrderId = response.data;
 
+            // Prepare the data for the new order
+            const newOrderData = {
+                tableId: initialTable._id,
+                items: [],
+                waiterID: userEmail,
+                orderID: generatedOrderId,
+                status: 'pending'
+            };
+
+            // Send a request to create the new order
+            const createOrderResponse = await api.post(`/orders/table/${initialTable._id}`, newOrderData);
+            console.log('New order created:', createOrderResponse.data);
+
             setCurrentOrder({
                 items: [],
                 orderID: generatedOrderId,
@@ -75,7 +116,8 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
             });
 
         } catch (error) {
-            console.error("Error generating order number:", error);
+            console.error("Error in handlePlaceOrderClick:", error);
+            setIsPlacingOrder(false);
         }
     };
 
@@ -83,6 +125,8 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
     const handleSubmitOrder = async () => {
         console.log('Submitting order:', currentOrder);
         setIsPlacingOrder(true);
+        setIsProcessingOrder(true);
+        setCountdown(60);
 
         // Prepare the order data without the orderID
         const orderData = {
@@ -91,22 +135,94 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
                 currentOrder.items.map(({ _id, name, price, quantity }) => ({
                 _id, name, price, quantity
             })),waiterID: userEmail,
-            orderID: currentOrder.orderID,
+            orderID: currentOrder.orderID, 
             status: 'created'
         };
 
-        dispatch(placeNewOrder(orderData))
-        .then(action => {
-            if (placeNewOrder.fulfilled.match(action)) {
-                console.log('New Order Response:', action.payload);
-                dispatch(addNewOrder(action.payload)); // Update the Redux state
-                console.log('Order placed successfully');
-            } else {
-                console.error('Failed to place order', action.error);
-            }
+        // Send a request to create the order with 'created' status
+        try {
+            const response = await api.patch(`/orders/update/${currentOrder.orderID}`, orderData);
+            console.log('Order created:', response.data);
+            setCurrentOrder({ ...currentOrder, status: 'created' });
+        } catch (error) {
+            console.error('Error creating order:', error);
             setIsPlacingOrder(false);
-        });
+            setIsProcessingOrder(false);
+            return; // Exit the function if there's an error
+        }
+
+        // Start countdown
+        countdownTimer.current = setInterval(() => {
+            setCountdown(prevCountdown => {
+                if (prevCountdown <= 1) {
+                    clearInterval(countdownTimer.current);
+                    return 0;
+                }
+                return prevCountdown - 1;
+            });
+        }, 1000);
+
+        // Set timeout for submitting the order
+        const submitOrderTimeout = setTimeout(async () => {
+            clearInterval(countdownTimer.current);
+            setIsProcessingOrder(false);
+
+            // Update the order status to 'sent'
+            try {
+                await api.patch(`/orders/update/${currentOrder.orderID}`, { status: 'sent' });
+                console.log('Order status updated to sent');
+                setCurrentOrder({ ...currentOrder, status: 'sent' });
+            } catch (error) {
+                console.error('Error updating order status to sent:', error);
+            }
+            
+            setIsPlacingOrder(false);
+        }, 60000);
+
+        // Save the timeout ID for cancellation
+        currentOrder.submitOrderTimeout = submitOrderTimeout;
     };
+
+    const handleCancelOrderDuringProcessing = async () => {
+        clearInterval(countdownTimer.current);
+        setIsProcessingOrder(false);
+    
+        // Cancel the order submission if it's scheduled
+        if (currentOrder.submitOrderTimeout) {
+            clearTimeout(currentOrder.submitOrderTimeout);
+            delete currentOrder.submitOrderTimeout; // Remove the timeout reference
+        }
+    
+        // Update the order status to 'pending' on the server
+        try {
+            await api.patch(`/orders/update/${currentOrder.orderID}`, { status: 'pending' });
+            console.log('Order status updated to pending');
+        } catch (error) {
+            console.error('Error updating order status to pending:', error);
+            // Optionally handle the error, e.g., show a message to the user
+        }
+
+        // Update the local state to reflect the 'pending' status
+        setCurrentOrder(currentOrder => ({ ...currentOrder, status: 'pending' }));
+    };
+
+    const handleClearOrder = () => {
+        setCurrentOrder({
+            ...currentOrder,
+            items: [],
+            status: 'pending'
+        });
+    }
+
+    const handleBack = () => {
+        // If needed, stop any ongoing processes
+        clearInterval(countdownTimer.current);
+        setIsProcessingOrder(false);
+        setIsPlacingOrder(false);
+    
+        onBackButtonClick(table);
+    };
+    
 
     const handleCancelOrder = async () => {
         console.log('Cancelling order:', currentOrder.orderID);
@@ -195,7 +311,8 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
                 style={{ 
                     display: isPlacingOrder ? 'none' : 'flex', 
                     justifyContent: 'center', 
-                    marginBottom: '30px' 
+                    marginBottom: '30px', 
+                    gap: '20px',
                 }}>
                 {/* Back Button */}
                 <button onClick={onBackButtonClick}>Back</button>
@@ -243,7 +360,7 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
                 <>
                     <br />
                     <div className="order-total">
-                        <h3>Total Amount: {calculateTotalAmount().toFixed(2)}€</h3>
+                        <h3>Total Amount: {typeof calculateTotalAmount() === 'number' ? calculateTotalAmount().toFixed(2) : '0.00'}€</h3>
                     </div>
                     
                     <MenuForOrder 
@@ -257,37 +374,89 @@ const TableInterface = ({ table: initialTable, onBackButtonClick }) => {
                         order={currentOrder}
                         onOrderUpdate={handleAddToOrder}
                         onOrderCancel={handleCancelOrder}
+                        countdown={countdown}
+                        isProcessing={isProcessingOrder}
                     />
 
-                    <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        gap: '15px', 
-                        marginTop: '15px' 
-                    }}>
-                        <button 
-                            onClick={handleSubmitOrder}
-                            style={{ backgroundColor: 'lightgreen' }}
-                        >Submit Order</button>
+                    {/* Butto to CLEAR the order */}
+                    {!isProcessingOrder && (
+                        <button
+                            onClick={handleClearOrder}
+                            style={{
+                                display: 'block',
+                                margin: 'auto',
+                                backgroundColor: 'grey',
+                                marginTop: '15px',
+                                marginBottom: '15px',
+                                width: '50%',
+                                padding: '10px',
+                                borderRadius: '5px',
+                                color: 'white',
+                                border: 'none',
+                                cursor: 'pointer',
+                            }}
+                        >Clear Order</button>
+                    )}
 
-                        <button 
-                            onClick={handleCancelOrder}
-                            style={{ backgroundColor: 'lightcoral' }}
-                        >Cancel Order</button>
-                    </div>
+                    {/* Display countdown and cancel button during order processing */}
+                    {isProcessingOrder ? (
+                        <div>
+                            <p
+                                style={{
+                                    textAlign: 'center',
+                                }}
+                            >Order processing... {countdown} seconds remaining</p>
+
+                            <div className='during-processing-container'>
+                                <button 
+                                    className='cancel-button-during-processing'
+                                    onClick={handleCancelOrderDuringProcessing}
+                                >Stop Order</button>
+
+                                <button
+                                    className='back-button-during-processing'
+                                    onClick={handleBack}
+                                >Back to Table</button>
+                            </div>
+                        </div>
+                    ) : (
+                        // Show submit and cancel buttons only when not processing
+                        <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'center', 
+                            gap: '15px', 
+                            marginTop: '15px' 
+                        }}>
+                            <button 
+                                onClick={handleSubmitOrder}
+                                style={{ backgroundColor: 'lightgreen' }}
+                            >Submit Order</button>
+
+                            <button 
+                                onClick={handleCancelOrder}
+                                style={{ backgroundColor: 'lightcoral' }}
+                            >Cancel Order</button>
+                        </div>
+                    )}
                 </>
             ) : (            
-                // Display existing orders
-                activeOrders.length > 0 && (
-                    activeOrders.map((order, index) => (
-                        <OrderBox 
-                            key={index} 
-                            order={order} 
-                            onOrderUpdate={handleAddToOrder} 
-                            onOrderCancel={handleCancelOrder} 
-                        />
-                    ))
-                )
+                    activeOrders.length === 0 && !isPlacingOrder ? (
+                        <p id="no-orders" style={{ 
+                            textAlign: 'center' 
+                        }}>No orders for this table.</p>
+                    ) : (
+                        activeOrders.map((order, index) => (
+                            <OrderBox 
+                                key={index} 
+                                order={order} 
+                                onOrderUpdate={handleAddToOrder} 
+                                onOrderCancel={handleCancelOrder} 
+                                onCancelOrderProcessing={handleCancelOrderDuringProcessing}
+                                countdown={countdown}
+                                isProcessing={isProcessingOrder}
+                            />
+                        ))
+                    )
             )}
 
             {/* Confirmation Modal for Freeing Table */}

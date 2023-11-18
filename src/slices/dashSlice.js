@@ -2,33 +2,39 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../api.js'; 
 
-export const fetchTables = createAsyncThunk('dashboard/fetchTables', async () => {
+export const fetchTables = createAsyncThunk(
+  'dashboard/fetchTables', async () => {
   const response = await api.get('/tables');
   return response.data;
 });
 
-export const updateTableStatus = createAsyncThunk('dashboard/updateTableStatus', async ({ tableId, status }) => {
+export const updateTableStatus = createAsyncThunk(
+  'dashboard/updateTableStatus', async ({ tableId, status }) => {
   await api.patch(`/tables/${tableId}/status`, { status });
   return { tableId, status };
 });
 
-export const fetchTableById = createAsyncThunk('dashboard/fetchTableById', async (tableId) => {
+export const fetchTableById = createAsyncThunk(
+  'dashboard/fetchTableById', async (tableId) => {
   const response = await api.get(`/tables/${tableId}`);
   return response.data;
 });
 
-export const fetchOrdersForTable = createAsyncThunk('dashboard/fetchOrdersForTable', async (tableId) => {
+export const fetchOrdersForTable = createAsyncThunk(
+  'dashboard/fetchOrdersForTable', async (tableId) => {
   // Implement API call to fetch orders for a table
   const response = await api.get(`/orders/fromTable/${tableId}`);
   return response.data;
 });
 
-export const fetchMenuItems = createAsyncThunk('dashboard/fetchMenuItems', async () => {
+export const fetchMenuItems = createAsyncThunk(
+  'dashboard/fetchMenuItems', async () => {
   const response = await api.get('/menu');
   return response.data;
 });
 
-export const placeNewOrder = createAsyncThunk('dashboard/placeNewOrder', async (orderData, { rejectWithValue }) => {
+export const placeNewOrder = createAsyncThunk(
+  'dashboard/placeNewOrder', async (orderData, { rejectWithValue }) => {
   try {
       const response = await api.post(`/orders/table/${orderData.tableId}`, orderData);
       return response.data;
@@ -36,6 +42,14 @@ export const placeNewOrder = createAsyncThunk('dashboard/placeNewOrder', async (
       return rejectWithValue(error.response ? error.response.data : 'Error placing new order');
   }
 });
+
+export const updateOrders = createAsyncThunk(
+  'dashboard/updateOrders',
+  async (orders) => {
+      // Logic to update the orders in the Redux store
+      return orders;
+  }
+);
 
 
 const initialState = {
@@ -71,7 +85,8 @@ const dashSlice = createSlice({
       state.email = action.payload;
     },
     addNewOrder: (state, action) => {
-      const existingOrderIndex = state.order.findIndex(o => o.orderID === action.payload.orderID);
+      const existingOrderIndex = 
+        state.order.findIndex(o => o.orderID === action.payload.orderID);
       if (existingOrderIndex !== -1) {
         // Replace existing order
         state.order[existingOrderIndex] = action.payload;
@@ -111,6 +126,9 @@ const dashSlice = createSlice({
       })
       .addCase(placeNewOrder.fulfilled, (state, action) => {
         state.order.push(action.payload);
+      })
+      .addCase(updateOrders.fulfilled, (state, action) => {
+        state.order = action.payload;
       });
   }
 });

@@ -69,9 +69,20 @@ const WaiterInterface = () => {
     };
 
 
-    const handleBackButtonClick = () => {
+    const handleBackButtonClick = (updatedTable) => {
         setShowTableInterface(false);
-        setCurrentTable(null);
+        
+        if (updatedTable && isValidTable(updatedTable)) { // Ensure updatedTable is valid
+            setCurrentTable(updatedTable);
+        } else {
+            setCurrentTable(null);
+        }
+    };
+
+    // Implement a validation function based on what a valid table should be
+    const isValidTable = (table) => {
+        // Example validation logic
+        return table && typeof table === 'object' && table.id; // Adjust based on your data structure
     };
 
     const handlePlaceOrder = () => {

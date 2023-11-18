@@ -50,13 +50,11 @@ const OrderInterface = ({ table, categories }) => {
         {/* Display table name and status */}
         <div className="table-details">
             <h2>Table: T{table.tableNumber} - Status: {table.status}</h2>
-            {/* Placeholder for the total number of orders */}
             <div>Total Orders: {Object.keys(order).length}</div>
-            {/* ... other code */}
         </div>
 
       <div className="menu-categories">
-        {categories.map((category) => (
+        {categories && categories.map((category) => (
           <button key={category.id} onClick={() => setCurrentCategory(category)}>
             {category.name}
           </button>

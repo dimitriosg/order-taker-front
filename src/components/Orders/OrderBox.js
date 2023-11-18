@@ -2,7 +2,13 @@
 import React from 'react';
 import '../../styles/OrderBox.css';
 
-const OrderBox = ({ order, onOrderUpdate, onOrderCancel }) => {
+const OrderBox = ({ 
+    order, 
+    onOrderUpdate, 
+    onOrderCancel, 
+    countdown, 
+    isProcessing,
+    onCancelOrderProcessing }) => {
     console.log("Received order in OrderBox:", order);
 
     const calculateOrderTotal = (items) => {
@@ -33,6 +39,12 @@ const OrderBox = ({ order, onOrderUpdate, onOrderCancel }) => {
                 Total Amount: {totalAmount.toFixed(2)}€ <br />
                 Status: {order.status}
             </p>
+
+            {order.status === 'created' && isProcessing && (
+                <div>
+                    <button onClick={onCancelOrderProcessing}>Cancel Order</button>
+                </div>
+            )}
 
             <span style={{ 
                 display: 'flex', 
