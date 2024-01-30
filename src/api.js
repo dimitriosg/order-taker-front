@@ -5,7 +5,7 @@ import axios from 'axios';
 // Set the baseURL based on the current hostname
 const baseURL = window.location.hostname === "localhost"
   ? "http://localhost:5000"
-  : "https://order-taker-back-5416a0177bda.herokuapp.com";
+  : "https://blacksea-order-b-5906ab01ef9d.herokuapp.com";
 
 const api = axios.create({
   baseURL: baseURL,
